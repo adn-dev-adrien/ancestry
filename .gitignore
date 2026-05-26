@@ -1,0 +1,36 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+build/
+.vite/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Coverage and test artifacts
+coverage/
+*.lcov
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor files
+.idea/
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+
+# Prisma
+server/prisma/migrations/.tmp/
+
+# Docker volumes (when bind-mounted locally)
+.docker-data/

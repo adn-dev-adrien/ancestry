@@ -1,0 +1,11 @@
+// Ancestry — Prisma schema.
+// Domain models (Tree, Person, Relationship) will be added with the tree-crud feature spec.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
