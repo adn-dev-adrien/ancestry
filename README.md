@@ -11,7 +11,7 @@ Client-server web app for building, editing, and visually exploring family trees
 ## Prerequisites
 
 - Node.js >= 22 (use `nvm use` to match `.nvmrc`)
-- Docker + Docker Compose
+- Docker + Docker Compose — on macOS, see [docs/docker.md](docs/docker.md) for the Colima setup
 - npm >= 10
 
 ## Quick start
@@ -39,7 +39,7 @@ Client-server web app for building, editing, and visually exploring family trees
    npm run dev
    ```
 
-   - API on http://localhost:3000
+   - API on http://localhost:3100
    - Web on http://localhost:5173
 
 ## Useful commands

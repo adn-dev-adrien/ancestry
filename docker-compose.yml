@@ -31,7 +31,7 @@ services:
       PORT: "3000"
       CORS_ORIGIN: http://localhost:5173
     ports:
-      - "3000:3000"
+      - "3100:3000"
     profiles:
       - prod
 

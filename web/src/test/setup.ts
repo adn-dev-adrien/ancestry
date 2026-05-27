@@ -18,7 +18,6 @@ if (typeof window !== 'undefined' && !window.ResizeObserver) {
 if (typeof window !== 'undefined' && !('DOMMatrixReadOnly' in window)) {
   class DOMMatrixReadOnlyMock {
     m22 = 1;
-    constructor(_init?: string | number[]) {}
   }
   (window as unknown as { DOMMatrixReadOnly: unknown }).DOMMatrixReadOnly = DOMMatrixReadOnlyMock;
 }
