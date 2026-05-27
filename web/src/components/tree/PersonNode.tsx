@@ -25,7 +25,8 @@ function PersonNodeComponent({ data, selected }: NodeProps<PersonNodeType>) {
       )}
       style={{ width: NODE_WIDTH, minHeight: NODE_HEIGHT }}
     >
-      <Handle type="target" position={Position.Top} className="!bg-muted-foreground" />
+      <Handle id="pc-target" type="target" position={Position.Top} className="!bg-muted-foreground" />
+      <Handle id="spouse-left" type="target" position={Position.Left} className="!bg-rose-300" />
       {person.photo && (
         <img
           src={person.photo}
@@ -48,7 +49,8 @@ function PersonNodeComponent({ data, selected }: NodeProps<PersonNodeType>) {
           </span>
         )}
       </div>
-      <Handle type="source" position={Position.Bottom} className="!bg-muted-foreground" />
+      <Handle id="spouse-right" type="source" position={Position.Right} className="!bg-rose-300" />
+      <Handle id="pc-source" type="source" position={Position.Bottom} className="!bg-muted-foreground" />
     </div>
   );
 }
