@@ -13,6 +13,7 @@ const person = (id: string, over: Partial<Person> = {}): Person => ({
   living: false,
   birthPlace: null,
   birthPlaceUncertain: false,
+  photo: null,
   gender: null,
   notes: null,
   x: null,

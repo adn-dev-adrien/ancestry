@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- Person photos: upload a photo (resized client-side, stored as a base64 data URL); shown as an
+  avatar on the node and in the detail panel, and included in JSON export/import.
 - Person search (Phase 3): a search box on the tree page lists matching persons (by given/family/
   birth name); picking one recenters the canvas on that node and highlights it.
 - JSON import/export (Phase 2): export a tree to a versioned JSON file; import a file as a new tree

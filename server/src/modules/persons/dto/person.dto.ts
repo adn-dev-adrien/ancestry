@@ -13,6 +13,12 @@ export const personFieldsSchema = z
     living: z.boolean().optional(),
     birthPlace: z.string().max(200).nullable().optional(),
     birthPlaceUncertain: z.boolean().optional(),
+    photo: z
+      .string()
+      .regex(/^data:image\/(jpeg|png|webp);base64,/, 'Expected an image data URL')
+      .max(1_500_000)
+      .nullable()
+      .optional(),
     gender: z.nativeEnum(Gender).nullable().optional(),
     notes: z.string().max(2000).nullable().optional(),
     x: z.number().finite().nullable().optional(),

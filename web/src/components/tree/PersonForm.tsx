@@ -18,6 +18,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { GENDERS } from '@/constants/gender';
+import { fileToAvatarDataUrl } from '@/utils/image';
 import type { PersonInput } from '@/services/persons';
 import type { Person } from '@/services/types';
 
@@ -30,6 +31,7 @@ interface PersonFormValues {
   living: boolean;
   birthPlace: string;
   birthPlaceUncertain: boolean;
+  photo: string;
   gender: '' | 'MALE' | 'FEMALE' | 'OTHER';
   notes: string;
 }
@@ -50,6 +52,7 @@ function makeSchema(t: TFunction) {
       living: z.boolean(),
       birthPlace: z.string().max(200),
       birthPlaceUncertain: z.boolean(),
+      photo: z.string(),
       gender: z.enum(['', 'MALE', 'FEMALE', 'OTHER']),
       notes: z.string().max(2000),
     })
@@ -73,6 +76,7 @@ function toFormValues(person?: Person): PersonFormValues {
     living: person?.living ?? false,
     birthPlace: person?.birthPlace ?? '',
     birthPlaceUncertain: person?.birthPlaceUncertain ?? false,
+    photo: person?.photo ?? '',
     gender: person?.gender ?? '',
     notes: person?.notes ?? '',
   };
@@ -88,6 +92,7 @@ function toInput(values: PersonFormValues): PersonInput {
     living: values.living,
     birthPlace: values.birthPlace || null,
     birthPlaceUncertain: values.birthPlaceUncertain,
+    photo: values.photo || null,
     gender: values.gender || null,
     notes: values.notes || null,
   };
@@ -144,6 +149,16 @@ export function PersonForm({
   const gender = watch('gender');
   const living = watch('living');
   const birthPlaceUncertain = watch('birthPlaceUncertain');
+  const photo = watch('photo');
+  const photoInputRef = useRef<HTMLInputElement>(null);
+
+  const onPhotoPicked = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    event.target.value = '';
+    if (!file) return;
+    const dataUrl = await fileToAvatarDataUrl(file);
+    setValue('photo', dataUrl, { shouldDirty: true, shouldValidate: true });
+  };
 
   const setLiving = (checked: boolean) => {
     setValue('living', checked, { shouldDirty: true, shouldValidate: true });
@@ -158,6 +173,39 @@ export function PersonForm({
         onExplicitSave?.();
       })}
     >
+      <div className="flex items-center gap-3">
+        <div className="size-16 shrink-0 overflow-hidden rounded-md border bg-muted">
+          {photo && <img src={photo} alt="" className="size-full object-cover" />}
+        </div>
+        <div className="flex flex-col gap-2">
+          <input
+            ref={photoInputRef}
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={onPhotoPicked}
+          />
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => photoInputRef.current?.click()}
+          >
+            {t('form.choosePhoto')}
+          </Button>
+          {photo && (
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={() => setValue('photo', '', { shouldDirty: true, shouldValidate: true })}
+            >
+              {t('form.removePhoto')}
+            </Button>
+          )}
+        </div>
+      </div>
+
       <div className="grid gap-1.5">
         <Label htmlFor="givenName">{t('form.givenName')}</Label>
         <Input id="givenName" {...register('givenName')} autoComplete="off" />

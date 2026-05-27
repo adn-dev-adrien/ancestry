@@ -1,6 +1,27 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
+import type { Person } from '@/services/types';
 import { PersonForm } from './PersonForm';
+
+const personWithPhoto: Person = {
+  id: 'p1',
+  treeId: 't',
+  givenName: 'Ada',
+  familyName: null,
+  birthName: null,
+  birthDate: null,
+  deathDate: null,
+  living: false,
+  birthPlace: null,
+  birthPlaceUncertain: false,
+  photo: 'data:image/jpeg;base64,abc',
+  gender: null,
+  notes: null,
+  x: null,
+  y: null,
+  createdAt: '',
+  updatedAt: '',
+};
 
 // UI defaults to French (see test setup).
 describe('PersonForm validation', () => {
@@ -49,5 +70,16 @@ describe('PersonForm validation', () => {
     expect(onSubmit).toHaveBeenCalledWith(
       expect.objectContaining({ givenName: 'Ada', birthName: 'Byron', birthPlace: 'London' }),
     );
+  });
+
+  it('shows the photo preview and removes it', () => {
+    const { container } = render(
+      <PersonForm mode="edit" person={personWithPhoto} onSubmit={vi.fn()} />,
+    );
+    expect(container.querySelector('img')).toHaveAttribute('src', personWithPhoto.photo!);
+
+    fireEvent.click(screen.getByRole('button', { name: 'Retirer la photo' }));
+
+    expect(container.querySelector('img')).toBeNull();
   });
 });

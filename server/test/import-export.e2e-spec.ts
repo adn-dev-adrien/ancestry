@@ -30,7 +30,7 @@ describe('Import / Export (e2e)', () => {
     createdTreeIds.push(tree.body.id);
     const p1 = await request(server)
       .post(`/api/trees/${tree.body.id}/persons`)
-      .send({ givenName: 'Ada' })
+      .send({ givenName: 'Ada', photo: 'data:image/jpeg;base64,/9j/test==' })
       .expect(201);
     const p2 = await request(server)
       .post(`/api/trees/${tree.body.id}/persons`)
@@ -63,6 +63,8 @@ describe('Import / Export (e2e)', () => {
       'Ada',
       'Bob',
     ]);
+    const ada = graph.body.persons.find((p: { givenName: string }) => p.givenName === 'Ada');
+    expect(ada.photo).toBe('data:image/jpeg;base64,/9j/test==');
   });
 
   it('replaces an existing tree content from a file', async () => {

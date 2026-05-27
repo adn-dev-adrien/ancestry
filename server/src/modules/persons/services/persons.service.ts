@@ -31,6 +31,7 @@ export class PersonsService {
       living: dto.living ?? false,
       birthPlace: dto.birthPlace ?? null,
       birthPlaceUncertain: dto.birthPlaceUncertain ?? false,
+      photo: dto.photo ?? null,
       gender: dto.gender ?? null,
       notes: dto.notes ?? null,
       x: dto.x ?? null,
@@ -57,6 +58,7 @@ export class PersonsService {
       ...(dto.birthPlaceUncertain !== undefined
         ? { birthPlaceUncertain: dto.birthPlaceUncertain }
         : {}),
+      ...(dto.photo !== undefined ? { photo: dto.photo } : {}),
       ...(dto.gender !== undefined ? { gender: dto.gender } : {}),
       ...(dto.notes !== undefined ? { notes: dto.notes } : {}),
       ...(dto.x !== undefined ? { x: dto.x } : {}),

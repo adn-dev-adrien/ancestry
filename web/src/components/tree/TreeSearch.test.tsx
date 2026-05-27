@@ -20,6 +20,7 @@ const person = (id: string, givenName: string, familyName: string | null = null)
   living: false,
   birthPlace: null,
   birthPlaceUncertain: false,
+  photo: null,
   gender: null,
   notes: null,
   x: null,
