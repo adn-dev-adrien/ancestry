@@ -4,7 +4,9 @@ import { EdgeIconBadge } from './EdgeIconBadge';
 
 export function SpouseEdge({ sourceX, sourceY, targetX, targetY, data }: EdgeProps) {
   const [path, labelX, labelY] = getStraightPath({ sourceX, sourceY, targetX, targetY });
-  const divorced = Boolean((data as { divorced?: boolean } | undefined)?.divorced);
+  const meta = data as { divorced?: boolean; marriageDate?: string | null } | undefined;
+  const divorced = Boolean(meta?.divorced);
+  const marriageYear = meta?.marriageDate ? meta.marriageDate.slice(0, 4) : undefined;
 
   const style = divorced
     ? { strokeDasharray: '2 3', opacity: 0.5 }
@@ -17,6 +19,7 @@ export function SpouseEdge({ sourceX, sourceY, targetX, targetY, data }: EdgePro
         icon={divorced ? HeartCrack : Heart}
         x={labelX}
         y={labelY}
+        label={marriageYear}
         className={
           divorced
             ? 'border-border text-muted-foreground opacity-70'

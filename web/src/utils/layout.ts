@@ -56,7 +56,7 @@ export function buildGraph(
           source: r.sourcePersonId,
           target: r.targetPersonId,
           type: 'spouse',
-          data: { divorced: r.divorced },
+          data: { divorced: r.divorced, marriageDate: r.marriageDate },
         },
   );
 
