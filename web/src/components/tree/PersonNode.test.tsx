@@ -83,6 +83,8 @@ describe('PersonNode (level of detail)', () => {
     expect(screen.getByText('Ada Lovelace')).toBeInTheDocument();
     expect(screen.queryByText('1815 – 1852')).toBeNull();
     expect(container.querySelector('img')).toBeNull();
+    // Name font is counter-scaled up when zoomed out (14 / 0.4 = 35px).
+    expect(screen.getByText('Ada Lovelace')).toHaveStyle({ fontSize: '35px' });
   });
 
   it('adds the photo but not the details at medium zoom', () => {

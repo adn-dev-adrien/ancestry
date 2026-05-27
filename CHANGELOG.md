@@ -9,7 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - Zoom-adaptive node detail: zoomed out shows only the name, a bit closer adds the photo, and
-  closer still shows all fields — keeping content legible. Node size stays constant.
+  closer still shows all fields — keeping content legible. Node size stays constant. The name font
+  is counter-scaled when zoomed out so names stay readable at low zoom.
 - Person name display: show whichever of family name / birth name is set; when both exist, show
   the family name followed by the birth name in parentheses (e.g. "Ada Lovelace (Byron)").
 

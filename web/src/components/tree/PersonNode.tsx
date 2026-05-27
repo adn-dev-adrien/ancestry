@@ -5,13 +5,16 @@ import { GENDER_NODE_CLASSES, NEUTRAL_NODE_CLASS } from '@/constants/gender';
 import type { PersonNode as PersonNodeType } from '@/utils/layout';
 import { NODE_HEIGHT, NODE_WIDTH } from '@/utils/layout';
 import { fullName, lifeSpan } from '@/utils/person';
-import { nodeDetailLevel } from '@/utils/nodeDetail';
+import { nameFontSize, nodeDetailLevel } from '@/utils/nodeDetail';
 import { cn } from '@/lib/utils';
 
 function PersonNodeComponent({ data, selected }: NodeProps<PersonNodeType>) {
   const { t } = useTranslation();
   const { person } = data;
-  const level = useStore((s) => nodeDetailLevel(s.transform[2]));
+  // Round to 0.05 steps so the node only re-renders on meaningful zoom changes.
+  const zoom = useStore((s) => Math.round(s.transform[2] * 20) / 20);
+  const level = nodeDetailLevel(zoom);
+  const nameStyle = { fontSize: `${nameFontSize(zoom)}px` };
 
   const span = lifeSpan(person, {
     born: t('person.bornPrefix'),
@@ -41,14 +44,16 @@ function PersonNodeComponent({ data, selected }: NodeProps<PersonNodeType>) {
       <Handle id="spouse-left" type="target" position={Position.Left} className="!bg-rose-300" />
 
       {level === 'compact' ? (
-        <div className="truncate text-center text-sm font-semibold leading-tight">
+        <div className="truncate text-center font-semibold leading-tight" style={nameStyle}>
           {fullName(person)}
         </div>
       ) : (
         <>
           {avatar}
           <div className="flex min-w-0 flex-col justify-center">
-            <div className="truncate text-sm font-semibold leading-tight">{fullName(person)}</div>
+            <div className="truncate font-semibold leading-tight" style={nameStyle}>
+              {fullName(person)}
+            </div>
             {level === 'full' && (
               <>
                 {span && <div className="text-xs text-muted-foreground">{span}</div>}
