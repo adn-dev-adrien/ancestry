@@ -9,6 +9,7 @@
   },
   "home": {
     "newTree": "Nouvel arbre",
+    "import": "Importer",
     "people_one": "{{count}} personne",
     "people_other": "{{count}} personnes",
     "emptyTitle": "Créez votre premier arbre",
@@ -28,6 +29,7 @@
     "fitView": "Ajuster la vue",
     "addPerson": "Ajouter une personne",
     "connectMode": "Mode connexion",
+    "export": "Exporter",
     "save": "Enregistrer",
     "statusIdle": "Enregistré",
     "statusDirty": "Modifications non enregistrées",
@@ -69,6 +71,17 @@
       "FEMALE": "Femme",
       "OTHER": "Autre"
     }
+  },
+  "importDialog": {
+    "title": "Importer un arbre",
+    "chooseTarget": "Que faire de ce fichier ?",
+    "newTree": "Créer un nouvel arbre",
+    "replace": "Remplacer un arbre existant",
+    "selectTree": "Arbre à remplacer",
+    "replaceWarning": "Le contenu de l'arbre sélectionné sera remplacé.",
+    "confirm": "Importer",
+    "invalidFile": "Fichier JSON invalide",
+    "importFailed": "Échec de l'import"
   },
   "connect": {
     "prompt": "{{source}} est…",

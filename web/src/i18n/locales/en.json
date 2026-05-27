@@ -9,6 +9,7 @@
   },
   "home": {
     "newTree": "New tree",
+    "import": "Import",
     "people_one": "{{count}} person",
     "people_other": "{{count}} people",
     "emptyTitle": "Start your first tree",
@@ -28,6 +29,7 @@
     "fitView": "Fit view",
     "addPerson": "Add person",
     "connectMode": "Connect mode",
+    "export": "Export",
     "save": "Save",
     "statusIdle": "Saved",
     "statusDirty": "Unsaved changes",
@@ -69,6 +71,17 @@
       "FEMALE": "Female",
       "OTHER": "Other"
     }
+  },
+  "importDialog": {
+    "title": "Import a tree",
+    "chooseTarget": "What should we do with this file?",
+    "newTree": "Create a new tree",
+    "replace": "Replace an existing tree",
+    "selectTree": "Tree to replace",
+    "replaceWarning": "The selected tree's content will be replaced.",
+    "confirm": "Import",
+    "invalidFile": "Invalid JSON file",
+    "importFailed": "Import failed"
   },
   "connect": {
     "prompt": "{{source}} is…",

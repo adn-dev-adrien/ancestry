@@ -1,8 +1,8 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Plus, TreePine } from 'lucide-react';
+import { Plus, TreePine, Upload } from 'lucide-react';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -16,17 +16,36 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { useCreateTree, useTrees } from '@/hooks/useTrees';
+import { useImportExport } from '@/hooks/useImportExport';
+import { ApiError } from '@/services/api';
+import type { ExportPayload } from '@/services/importExport';
+
+type ImportMode = 'new' | 'replace';
 
 export function HomePage() {
   const { t } = useTranslation();
   const { data: trees, isLoading } = useTrees();
   const createTree = useCreateTree();
+  const { importNew, importReplace } = useImportExport();
   const navigate = useNavigate();
 
   const [open, setOpen] = useState(false);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [importPayload, setImportPayload] = useState<ExportPayload | null>(null);
+  const [importMode, setImportMode] = useState<ImportMode>('new');
+  const [replaceTargetId, setReplaceTargetId] = useState('');
+  const [importError, setImportError] = useState<string | null>(null);
 
   const submit = () => {
     const trimmed = title.trim();
@@ -44,12 +63,56 @@ export function HomePage() {
     );
   };
 
+  const onFilePicked = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    event.target.value = '';
+    if (!file) return;
+    setImportMode('new');
+    setReplaceTargetId('');
+    setImportError(null);
+    try {
+      const parsed = JSON.parse(await file.text()) as ExportPayload;
+      setImportPayload(parsed);
+    } catch {
+      setImportPayload({} as ExportPayload);
+      setImportError(t('importDialog.invalidFile'));
+    }
+  };
+
+  const runImport = () => {
+    if (!importPayload) return;
+    setImportError(null);
+    const onError = (e: unknown) =>
+      setImportError(e instanceof ApiError ? e.message : t('importDialog.importFailed'));
+    const onSuccess = (tree: { id: string }) => {
+      setImportPayload(null);
+      navigate(`/trees/${tree.id}`);
+    };
+
+    if (importMode === 'replace') {
+      if (!replaceTargetId) return;
+      importReplace.mutate({ treeId: replaceTargetId, payload: importPayload }, { onSuccess, onError });
+    } else {
+      importNew.mutate(importPayload, { onSuccess, onError });
+    }
+  };
+
   return (
     <div className="mx-auto flex min-h-dvh w-full max-w-4xl flex-col px-4 py-6 md:px-6">
       <header className="flex items-center justify-between">
         <h1 className="text-xl font-semibold tracking-tight">Ancestry</h1>
         <div className="flex items-center gap-3">
           <LanguageSwitcher />
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="application/json,.json"
+            className="hidden"
+            onChange={onFilePicked}
+          />
+          <Button variant="outline" onClick={() => fileInputRef.current?.click()}>
+            <Upload className="size-4" /> {t('home.import')}
+          </Button>
           <Button onClick={() => setOpen(true)}>
             <Plus className="size-4" /> {t('home.newTree')}
           </Button>
@@ -130,6 +193,65 @@ export function HomePage() {
             </Button>
             <Button onClick={submit} disabled={!title.trim() || createTree.isPending}>
               {t('common.create')}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={importPayload !== null} onOpenChange={(next) => !next && setImportPayload(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{t('importDialog.title')}</DialogTitle>
+          </DialogHeader>
+          <div className="flex flex-col gap-4">
+            <div className="grid gap-1.5">
+              <Label htmlFor="import-mode">{t('importDialog.chooseTarget')}</Label>
+              <Select value={importMode} onValueChange={(v) => setImportMode(v as ImportMode)}>
+                <SelectTrigger id="import-mode">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="new">{t('importDialog.newTree')}</SelectItem>
+                  <SelectItem value="replace">{t('importDialog.replace')}</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            {importMode === 'replace' && (
+              <div className="grid gap-1.5">
+                <Label htmlFor="replace-target">{t('importDialog.selectTree')}</Label>
+                <Select value={replaceTargetId} onValueChange={setReplaceTargetId}>
+                  <SelectTrigger id="replace-target">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {(trees ?? []).map((tree) => (
+                      <SelectItem key={tree.id} value={tree.id}>
+                        {tree.title}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <p className="text-xs text-muted-foreground">{t('importDialog.replaceWarning')}</p>
+              </div>
+            )}
+
+            {importError && <p className="text-sm text-destructive">{importError}</p>}
+          </div>
+          <DialogFooter>
+            <Button variant="ghost" onClick={() => setImportPayload(null)}>
+              {t('common.cancel')}
+            </Button>
+            <Button
+              onClick={runImport}
+              disabled={
+                Boolean(importError) ||
+                (importMode === 'replace' && !replaceTargetId) ||
+                importNew.isPending ||
+                importReplace.isPending
+              }
+            >
+              {t('importDialog.confirm')}
             </Button>
           </DialogFooter>
         </DialogContent>

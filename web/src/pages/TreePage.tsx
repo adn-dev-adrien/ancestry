@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { ReactFlowProvider } from '@xyflow/react';
 import { useTranslation } from 'react-i18next';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
+import { downloadTreeExport } from '@/services/importExport';
 import { useTree } from '@/hooks/useTree';
 import { usePersonMutations } from '@/hooks/usePersonMutations';
 import { useRelationshipMutations } from '@/hooks/useRelationshipMutations';
@@ -231,6 +232,9 @@ export function TreePage() {
           onSave={() => {
             if (timer.current) clearTimeout(timer.current);
             void flush();
+          }}
+          onExport={() => {
+            downloadTreeExport(treeId, tree.title).catch(showError);
           }}
         />
 
