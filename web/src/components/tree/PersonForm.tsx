@@ -10,6 +10,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
+import { CommuneInput } from './CommuneInput';
 import {
   Select,
   SelectContent,
@@ -150,6 +151,7 @@ export function PersonForm({
   const gender = watch('gender');
   const living = watch('living');
   const birthPlaceUncertain = watch('birthPlaceUncertain');
+  const birthPlace = watch('birthPlace');
   const photo = watch('photo');
   const photoInputRef = useRef<HTMLInputElement>(null);
   const [dragging, setDragging] = useState(false);
@@ -274,7 +276,12 @@ export function PersonForm({
 
       <div className="grid gap-1.5">
         <Label htmlFor="birthPlace">{t('form.birthPlace')}</Label>
-        <Input id="birthPlace" {...register('birthPlace')} autoComplete="off" />
+        <CommuneInput
+          id="birthPlace"
+          value={birthPlace}
+          placeholder={t('form.birthPlace')}
+          onChange={(v) => setValue('birthPlace', v, { shouldDirty: true, shouldValidate: true })}
+        />
         <label className="flex items-center gap-2 text-sm text-muted-foreground">
           <Checkbox
             id="birthPlaceUncertain"

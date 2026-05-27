@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- Birth place autocomplete: the field suggests French communes live from geo.api.gouv.fr
+  (no local list); picking one stores "Name (Department)". Manual free-text entry still works
+  for renamed/missing/foreign places.
 - Person photos: add a photo via file picker or drag-and-drop onto the photo zone (resized
   client-side, stored as a base64 data URL); shown as an avatar on the node and in the detail
   panel, and included in JSON export/import.
