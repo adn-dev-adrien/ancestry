@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- Person search (Phase 3): a search box on the tree page lists matching persons (by given/family/
+  birth name); picking one recenters the canvas on that node and highlights it.
 - JSON import/export (Phase 2): export a tree to a versioned JSON file; import a file as a new tree
   or to replace an existing tree. Import is atomic and re-maps person ids. Validated server-side.
 - Internationalization (FR/EN) with a flag language switcher; French by default, choice persisted

@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { ReactFlowProvider } from '@xyflow/react';
 import { useTranslation } from 'react-i18next';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
+import { TreeSearch } from '@/components/tree/TreeSearch';
 import { downloadTreeExport } from '@/services/importExport';
 import { useTree } from '@/hooks/useTree';
 import { usePersonMutations } from '@/hooks/usePersonMutations';
@@ -39,6 +40,7 @@ export function TreePage() {
   const [connectTargetId, setConnectTargetId] = useState<string | null>(null);
   const [saveStatus, setSaveStatus] = useState<SaveStatus>('idle');
   const [error, setError] = useState<string | null>(null);
+  const [focusedId, setFocusedId] = useState<string | null>(null);
 
   const byId = (id: string | null) => persons.find((p) => p.id === id);
   const showError = useCallback(
@@ -108,6 +110,7 @@ export function TreePage() {
       exitConnect();
     }
     setPanel(null);
+    setFocusedId(null);
   };
 
   useEffect(() => {
@@ -206,10 +209,15 @@ export function TreePage() {
 
         <LanguageSwitcher className="absolute right-4 top-4 z-10" />
 
+        <div className="absolute left-4 top-16 z-10">
+          <TreeSearch persons={persons} onSelect={setFocusedId} />
+        </div>
+
         <TreeCanvas
           persons={persons}
           relationships={relationships}
           selectedId={panel?.mode === 'edit' ? panel.personId : null}
+          focusedId={focusedId}
           connectMode={connectMode}
           connectSourceId={connectSourceId}
           onNodeClick={onNodeClick}

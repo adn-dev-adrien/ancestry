@@ -72,6 +72,10 @@
       "OTHER": "Other"
     }
   },
+  "search": {
+    "placeholder": "Search a person…",
+    "noResults": "No results"
+  },
   "importDialog": {
     "title": "Import a tree",
     "chooseTarget": "What should we do with this file?",
