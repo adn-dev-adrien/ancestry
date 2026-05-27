@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- Person name display: show whichever of family name / birth name is set; when both exist, show
+  the family name followed by the birth name in parentheses (e.g. "Ada Lovelace (Byron)").
+
 ### Added
 - Marriage & divorce on spouse links: optional marriage date, a divorced flag and an optional
   divorce date, editable from the person panel and by clicking the link. The marriage year shows

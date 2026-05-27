@@ -1,7 +1,13 @@
 import type { Person } from '@/services/types';
 
 export function fullName(person: Person): string {
-  return [person.givenName, person.familyName].filter(Boolean).join(' ');
+  // Family part: show whichever name is set; when both exist, show the family
+  // (used) name followed by the birth name in parentheses.
+  const family =
+    person.familyName && person.birthName
+      ? `${person.familyName} (${person.birthName})`
+      : person.familyName || person.birthName || '';
+  return [person.givenName, family].filter(Boolean).join(' ');
 }
 
 function year(date: string | null): string | null {
