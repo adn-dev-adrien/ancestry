@@ -1,7 +1,7 @@
 import { BaseEdge, getSmoothStepPath, type EdgeProps } from '@xyflow/react';
-import { Baby } from 'lucide-react';
-import { EdgeIconBadge } from './EdgeIconBadge';
 
+// Plain, light orthogonal connector used for both parent→union and union→child segments
+// (the "family bus"). No icon badge, so multiple children stay uncluttered.
 export function ParentChildEdge({
   sourceX,
   sourceY,
@@ -10,9 +10,8 @@ export function ParentChildEdge({
   sourcePosition,
   targetPosition,
   markerEnd,
-  style,
 }: EdgeProps) {
-  const [path, labelX, labelY] = getSmoothStepPath({
+  const [path] = getSmoothStepPath({
     sourceX,
     sourceY,
     targetX,
@@ -21,15 +20,5 @@ export function ParentChildEdge({
     targetPosition,
   });
 
-  return (
-    <>
-      <BaseEdge path={path} markerEnd={markerEnd} style={style} />
-      <EdgeIconBadge
-        icon={Baby}
-        x={labelX}
-        y={labelY}
-        className="border-blue-300 text-blue-500"
-      />
-    </>
-  );
+  return <BaseEdge path={path} markerEnd={markerEnd} style={{ strokeWidth: 1.5 }} />;
 }
