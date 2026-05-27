@@ -1,0 +1,44 @@
+name: Deploy to Raspberry Pi
+
+# Publishing a GitHub Release deploys the current code to the self-hosted Pi runner.
+# A manual run is also available from the Actions tab.
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-pi
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Write environment file
+        run: |
+          umask 077
+          cat > .env <<EOF
+          POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
+          VITE_API_URL=/api
+          CORS_ORIGIN=${{ vars.CORS_ORIGIN || 'http://localhost:8080' }}
+          EOF
+
+      - name: Build images
+        run: docker compose --profile prod build
+
+      - name: Start database
+        run: docker compose --profile prod up -d postgres
+
+      - name: Apply database migrations
+        run: docker compose --profile prod run --rm api npx prisma migrate deploy
+
+      - name: Start the stack
+        run: docker compose --profile prod up -d
+
+      - name: Prune dangling images
+        if: always()
+        run: docker image prune -f
