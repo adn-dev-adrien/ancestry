@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- Person name display: show whichever of family name / birth name is set; when both exist, show
+  the family name followed by the birth name in parentheses (e.g. "Ada Lovelace (Byron)").
+
 ### Added
 - Relationship edge icons: a small uniform badge at the middle of each link — a baby (blue) on
   parent-child edges, a heart (rose) on spouse edges — making links self-explanatory.
