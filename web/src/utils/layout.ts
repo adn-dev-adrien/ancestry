@@ -48,14 +48,14 @@ export function buildGraph(
           id: r.id,
           source: r.sourcePersonId,
           target: r.targetPersonId,
-          type: 'smoothstep',
+          type: 'parentChild',
           markerEnd: { type: MarkerType.ArrowClosed },
         }
       : {
           id: r.id,
           source: r.sourcePersonId,
           target: r.targetPersonId,
-          type: 'straight',
+          type: 'spouse',
           style: { strokeDasharray: '6 4' },
           data: { spouse: true },
         },
