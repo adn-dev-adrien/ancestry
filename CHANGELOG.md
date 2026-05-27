@@ -15,6 +15,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   the family name followed by the birth name in parentheses (e.g. "Ada Lovelace (Byron)").
 
 ### Added
+- Deployment: a GitHub Actions workflow deploys to a self-hosted Raspberry Pi runner on release
+  (build images, run migrations, compose up). The web serves the app and reverse-proxies `/api`
+  to the API (single origin). See `docs/deployment.md`.
 - Marriage & divorce on spouse links: optional marriage date, a divorced flag and an optional
   divorce date, editable from the person panel and by clicking the link. The marriage year shows
   under the heart on the graph. Divorced marriages render faded/dotted with a broken-heart icon;
