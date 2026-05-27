@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -18,6 +18,8 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { GENDERS } from '@/constants/gender';
+import { fileToAvatarDataUrl } from '@/utils/image';
+import { cn } from '@/lib/utils';
 import type { PersonInput } from '@/services/persons';
 import type { Person } from '@/services/types';
 
@@ -30,6 +32,7 @@ interface PersonFormValues {
   living: boolean;
   birthPlace: string;
   birthPlaceUncertain: boolean;
+  photo: string;
   gender: '' | 'MALE' | 'FEMALE' | 'OTHER';
   notes: string;
 }
@@ -50,6 +53,7 @@ function makeSchema(t: TFunction) {
       living: z.boolean(),
       birthPlace: z.string().max(200),
       birthPlaceUncertain: z.boolean(),
+      photo: z.string(),
       gender: z.enum(['', 'MALE', 'FEMALE', 'OTHER']),
       notes: z.string().max(2000),
     })
@@ -73,6 +77,7 @@ function toFormValues(person?: Person): PersonFormValues {
     living: person?.living ?? false,
     birthPlace: person?.birthPlace ?? '',
     birthPlaceUncertain: person?.birthPlaceUncertain ?? false,
+    photo: person?.photo ?? '',
     gender: person?.gender ?? '',
     notes: person?.notes ?? '',
   };
@@ -88,6 +93,7 @@ function toInput(values: PersonFormValues): PersonInput {
     living: values.living,
     birthPlace: values.birthPlace || null,
     birthPlaceUncertain: values.birthPlaceUncertain,
+    photo: values.photo || null,
     gender: values.gender || null,
     notes: values.notes || null,
   };
@@ -144,6 +150,27 @@ export function PersonForm({
   const gender = watch('gender');
   const living = watch('living');
   const birthPlaceUncertain = watch('birthPlaceUncertain');
+  const photo = watch('photo');
+  const photoInputRef = useRef<HTMLInputElement>(null);
+  const [dragging, setDragging] = useState(false);
+
+  const applyPhotoFile = async (file: File | undefined) => {
+    if (!file || !file.type.startsWith('image/')) return;
+    const dataUrl = await fileToAvatarDataUrl(file);
+    setValue('photo', dataUrl, { shouldDirty: true, shouldValidate: true });
+  };
+
+  const onPhotoPicked = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    event.target.value = '';
+    void applyPhotoFile(file);
+  };
+
+  const onPhotoDrop = (event: React.DragEvent) => {
+    event.preventDefault();
+    setDragging(false);
+    void applyPhotoFile(event.dataTransfer.files?.[0]);
+  };
 
   const setLiving = (checked: boolean) => {
     setValue('living', checked, { shouldDirty: true, shouldValidate: true });
@@ -158,6 +185,51 @@ export function PersonForm({
         onExplicitSave?.();
       })}
     >
+      <div
+        className={cn(
+          'flex items-center gap-3 rounded-md border border-dashed p-3 transition-colors',
+          dragging ? 'border-primary bg-accent' : 'border-border',
+        )}
+        onDragOver={(e) => {
+          e.preventDefault();
+          setDragging(true);
+        }}
+        onDragLeave={() => setDragging(false)}
+        onDrop={onPhotoDrop}
+      >
+        <div className="size-16 shrink-0 overflow-hidden rounded-md border bg-muted">
+          {photo && <img src={photo} alt="" className="size-full object-cover" />}
+        </div>
+        <div className="flex flex-col gap-2">
+          <input
+            ref={photoInputRef}
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={onPhotoPicked}
+          />
+          <p className="text-xs text-muted-foreground">{t('form.dropHint')}</p>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => photoInputRef.current?.click()}
+          >
+            {t('form.choosePhoto')}
+          </Button>
+          {photo && (
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={() => setValue('photo', '', { shouldDirty: true, shouldValidate: true })}
+            >
+              {t('form.removePhoto')}
+            </Button>
+          )}
+        </div>
+      </div>
+
       <div className="grid gap-1.5">
         <Label htmlFor="givenName">{t('form.givenName')}</Label>
         <Input id="givenName" {...register('givenName')} autoComplete="off" />

@@ -59,6 +59,7 @@ describe('PersonsService', () => {
       living: true,
       birthPlace: 'London',
       birthPlaceUncertain: true,
+      photo: 'data:image/jpeg;base64,abc',
     });
     expect(repo.create).toHaveBeenCalledWith(
       't1',
@@ -67,6 +68,7 @@ describe('PersonsService', () => {
         living: true,
         birthPlace: 'London',
         birthPlaceUncertain: true,
+        photo: 'data:image/jpeg;base64,abc',
       }),
     );
   });

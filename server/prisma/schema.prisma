@@ -42,6 +42,7 @@ model Person {
   living              Boolean @default(false)
   birthPlace          String?
   birthPlaceUncertain Boolean @default(false)
+  photo               String?
   gender              Gender?
   notes               String?
   x                   Float?

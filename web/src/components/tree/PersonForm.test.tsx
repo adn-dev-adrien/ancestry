@@ -1,6 +1,32 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
+import type { Person } from '@/services/types';
+
+vi.mock('@/utils/image', () => ({
+  fileToAvatarDataUrl: vi.fn().mockResolvedValue('data:image/jpeg;base64,DROPPED'),
+}));
+
 import { PersonForm } from './PersonForm';
+
+const personWithPhoto: Person = {
+  id: 'p1',
+  treeId: 't',
+  givenName: 'Ada',
+  familyName: null,
+  birthName: null,
+  birthDate: null,
+  deathDate: null,
+  living: false,
+  birthPlace: null,
+  birthPlaceUncertain: false,
+  photo: 'data:image/jpeg;base64,abc',
+  gender: null,
+  notes: null,
+  x: null,
+  y: null,
+  createdAt: '',
+  updatedAt: '',
+};
 
 // UI defaults to French (see test setup).
 describe('PersonForm validation', () => {
@@ -48,6 +74,30 @@ describe('PersonForm validation', () => {
     await waitFor(() => expect(onSubmit).toHaveBeenCalled());
     expect(onSubmit).toHaveBeenCalledWith(
       expect.objectContaining({ givenName: 'Ada', birthName: 'Byron', birthPlace: 'London' }),
+    );
+  });
+
+  it('shows the photo preview and removes it', () => {
+    const { container } = render(
+      <PersonForm mode="edit" person={personWithPhoto} onSubmit={vi.fn()} />,
+    );
+    expect(container.querySelector('img')).toHaveAttribute('src', personWithPhoto.photo!);
+
+    fireEvent.click(screen.getByRole('button', { name: 'Retirer la photo' }));
+
+    expect(container.querySelector('img')).toBeNull();
+  });
+
+  it('accepts a photo dropped onto the photo zone', async () => {
+    const { container } = render(<PersonForm mode="create" onSubmit={vi.fn()} />);
+    const file = new File(['x'], 'face.png', { type: 'image/png' });
+
+    fireEvent.drop(screen.getByText('Glissez une photo ici'), {
+      dataTransfer: { files: [file] },
+    });
+
+    await waitFor(() =>
+      expect(container.querySelector('img')).toHaveAttribute('src', 'data:image/jpeg;base64,DROPPED'),
     );
   });
 });

@@ -19,26 +19,35 @@ function PersonNodeComponent({ data, selected }: NodeProps<PersonNodeType>) {
   return (
     <div
       className={cn(
-        'flex select-none flex-col justify-center rounded-lg border px-3 py-2 shadow-sm transition-transform',
+        'flex select-none items-center gap-2 rounded-lg border px-3 py-2 shadow-sm transition-transform',
         tint,
         selected && 'border-primary ring-2 ring-primary scale-[1.03]',
       )}
       style={{ width: NODE_WIDTH, minHeight: NODE_HEIGHT }}
     >
       <Handle type="target" position={Position.Top} className="!bg-muted-foreground" />
-      <div className="truncate text-sm font-semibold leading-tight">{fullName(person)}</div>
-      {span && <div className="text-xs text-muted-foreground">{span}</div>}
-      {person.birthPlace && (
-        <div className="truncate text-xs text-muted-foreground">
-          {person.birthPlace}
-          {person.birthPlaceUncertain ? ' ?' : ''}
-        </div>
+      {person.photo && (
+        <img
+          src={person.photo}
+          alt=""
+          className="size-10 shrink-0 rounded-md border border-border object-cover"
+        />
       )}
-      {person.gender && (
-        <span className="mt-1 w-fit rounded bg-muted px-1.5 py-0.5 text-[10px] uppercase tracking-wide text-muted-foreground">
-          {t(`person.gender.${person.gender}`)}
-        </span>
-      )}
+      <div className="flex min-w-0 flex-col justify-center">
+        <div className="truncate text-sm font-semibold leading-tight">{fullName(person)}</div>
+        {span && <div className="text-xs text-muted-foreground">{span}</div>}
+        {person.birthPlace && (
+          <div className="truncate text-xs text-muted-foreground">
+            {person.birthPlace}
+            {person.birthPlaceUncertain ? ' ?' : ''}
+          </div>
+        )}
+        {person.gender && (
+          <span className="mt-1 w-fit rounded bg-muted px-1.5 py-0.5 text-[10px] uppercase tracking-wide text-muted-foreground">
+            {t(`person.gender.${person.gender}`)}
+          </span>
+        )}
+      </div>
       <Handle type="source" position={Position.Bottom} className="!bg-muted-foreground" />
     </div>
   );
