@@ -11,11 +11,12 @@ import { useRelationshipMutations } from '@/hooks/useRelationshipMutations';
 import { useUpdateTree } from '@/hooks/useTrees';
 import { ApiError } from '@/services/api';
 import type { PersonInput } from '@/services/persons';
-import type { Person } from '@/services/types';
+import type { Person, Relationship } from '@/services/types';
 import { fullName } from '@/utils/person';
 import { TreeCanvas } from '@/components/tree/TreeCanvas';
 import { Toolbar, type SaveStatus } from '@/components/tree/Toolbar';
 import { PersonDetailPanel } from '@/components/tree/PersonDetailPanel';
+import { MarriageEditor } from '@/components/tree/MarriageEditor';
 import {
   ConnectModeOverlay,
   type ConnectChoice,
@@ -41,6 +42,7 @@ export function TreePage() {
   const [saveStatus, setSaveStatus] = useState<SaveStatus>('idle');
   const [error, setError] = useState<string | null>(null);
   const [focusedId, setFocusedId] = useState<string | null>(null);
+  const [editingMarriage, setEditingMarriage] = useState<Relationship | null>(null);
 
   const byId = (id: string | null) => persons.find((p) => p.id === id);
   const showError = useCallback(
@@ -223,6 +225,10 @@ export function TreePage() {
           onNodeClick={onNodeClick}
           onPaneClick={onPaneClick}
           onPositionChange={onPositionChange}
+          onSpouseEdgeClick={(id) => {
+            const rel = relationships.find((r) => r.id === id);
+            if (rel) setEditingMarriage(rel);
+          }}
         />
 
         <Toolbar
@@ -274,6 +280,20 @@ export function TreePage() {
           onSubmit={onSubmitPerson}
           onExplicitSave={panel?.mode === 'edit' ? () => setPanel(null) : undefined}
           onDelete={panel?.mode === 'edit' ? onDeletePerson : undefined}
+          onEditMarriage={setEditingMarriage}
+        />
+
+        <MarriageEditor
+          relationship={editingMarriage}
+          isSaving={relationshipMutations.update.isPending}
+          onClose={() => setEditingMarriage(null)}
+          onSave={(input) => {
+            if (!editingMarriage) return;
+            relationshipMutations.update.mutate(
+              { id: editingMarriage.id, ...input },
+              { onError: showError, onSuccess: () => setEditingMarriage(null) },
+            );
+          }}
         />
       </div>
     </ReactFlowProvider>

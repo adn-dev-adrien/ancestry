@@ -42,24 +42,37 @@ export function buildGraph(
     };
   });
 
-  const edges: Edge[] = relationships.map((r) =>
-    r.type === 'PARENT_CHILD'
-      ? {
-          id: r.id,
-          source: r.sourcePersonId,
-          target: r.targetPersonId,
-          type: 'parentChild',
-          markerEnd: { type: MarkerType.ArrowClosed },
-        }
-      : {
-          id: r.id,
-          source: r.sourcePersonId,
-          target: r.targetPersonId,
-          type: 'spouse',
-          style: { strokeDasharray: '6 4' },
-          data: { spouse: true },
-        },
-  );
+  const posById = new Map(nodes.map((n) => [n.id, n.position]));
+
+  const edges: Edge[] = relationships.map((r) => {
+    if (r.type === 'PARENT_CHILD') {
+      return {
+        id: r.id,
+        source: r.sourcePersonId,
+        target: r.targetPersonId,
+        sourceHandle: 'pc-source',
+        targetHandle: 'pc-target',
+        type: 'parentChild',
+        markerEnd: { type: MarkerType.ArrowClosed },
+      };
+    }
+
+    // Spouse links are horizontal: connect the inner vertical sides of the two nodes.
+    // Pick which person is on the left so the edge leaves a right side and enters a left side.
+    const sourceLeft =
+      (posById.get(r.sourcePersonId)?.x ?? 0) <= (posById.get(r.targetPersonId)?.x ?? 0);
+    const leftId = sourceLeft ? r.sourcePersonId : r.targetPersonId;
+    const rightId = sourceLeft ? r.targetPersonId : r.sourcePersonId;
+    return {
+      id: r.id,
+      source: leftId,
+      target: rightId,
+      sourceHandle: 'spouse-right',
+      targetHandle: 'spouse-left',
+      type: 'spouse',
+      data: { divorced: r.divorced, marriageDate: r.marriageDate },
+    };
+  });
 
   return { nodes, edges };
 }

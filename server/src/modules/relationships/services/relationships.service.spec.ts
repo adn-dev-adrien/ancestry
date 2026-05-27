@@ -17,6 +17,8 @@ describe('RelationshipsService', () => {
       findPersonsByIds: jest.fn(),
       findByTree: jest.fn().mockResolvedValue([]),
       create: jest.fn().mockResolvedValue({ id: 'rel-1' }),
+      findById: jest.fn(),
+      update: jest.fn().mockResolvedValue({ id: 'rel-1' }),
       delete: jest.fn(),
       exists: jest.fn(),
     } as unknown as jest.Mocked<RelationshipsRepository>;
@@ -133,6 +135,33 @@ describe('RelationshipsService', () => {
       sourcePersonId: A,
       targetPersonId: B,
       type: RelationshipType.SPOUSE,
+    });
+  });
+
+  describe('update', () => {
+    it('throws 404 when the relationship is missing', async () => {
+      repo.findById.mockResolvedValue(null as never);
+      await expect(service.update('nope', { marriageDate: '1990-01-01' })).rejects.toBeInstanceOf(
+        NotFoundException,
+      );
+    });
+
+    it('rejects updating a non-spouse relationship', async () => {
+      repo.findById.mockResolvedValue({ id: 'r1', type: RelationshipType.PARENT_CHILD } as never);
+      await expect(service.update('r1', { marriageDate: '1990-01-01' })).rejects.toMatchObject({
+        code: 'NOT_A_SPOUSE_RELATIONSHIP',
+      });
+      expect(repo.update).not.toHaveBeenCalled();
+    });
+
+    it('persists marriage fields for a spouse relationship', async () => {
+      repo.findById.mockResolvedValue({ id: 'r1', type: RelationshipType.SPOUSE } as never);
+      await service.update('r1', { marriageDate: '1990-06-01', divorced: true, divorceDate: '2005-03-02' });
+      expect(repo.update).toHaveBeenCalledWith('r1', {
+        marriageDate: '1990-06-01',
+        divorced: true,
+        divorceDate: '2005-03-02',
+      });
     });
   });
 });

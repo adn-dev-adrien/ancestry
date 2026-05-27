@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { Relationship } from '@/services/types';
-import { childrenOf, parentsOf, spousesOf } from './relationships';
+import { childrenOf, parentsOf, spousesOf, spouseRelationships } from './relationships';
 
 const rel = (
   id: string,
@@ -13,6 +13,9 @@ const rel = (
   sourcePersonId: source,
   targetPersonId: target,
   type,
+  marriageDate: null,
+  divorced: false,
+  divorceDate: null,
   createdAt: '',
 });
 
@@ -35,5 +38,12 @@ describe('relationship derivations', () => {
   it('spousesOf returns the other side regardless of direction', () => {
     expect(spousesOf('B', fixture)).toEqual(['D']);
     expect(spousesOf('D', fixture)).toEqual(['B']);
+  });
+
+  it('spouseRelationships returns the spouse rows with the partner resolved', () => {
+    const rows = spouseRelationships('B', fixture);
+    expect(rows).toHaveLength(1);
+    expect(rows[0].partnerId).toBe('D');
+    expect(rows[0].relationship.id).toBe('r3');
   });
 });

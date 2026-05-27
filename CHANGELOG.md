@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- Marriage & divorce on spouse links: optional marriage date, a divorced flag and an optional
+  divorce date, editable from the person panel and by clicking the link. The marriage year shows
+  under the heart on the graph. Divorced marriages render faded/dotted with a broken-heart icon;
+  the data is included in JSON export/import.
 - Relationship edge icons: a small uniform badge at the middle of each link — a baby (blue) on
   parent-child edges, a heart (rose) on spouse edges — making links self-explanatory.
 - Birth place autocomplete: the field suggests French communes live from geo.api.gouv.fr

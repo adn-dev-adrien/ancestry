@@ -86,6 +86,53 @@ describe('Tree CRUD (e2e)', () => {
     expect(after.body.relationships.length).toBe(relCountBefore - 1);
   });
 
+  it('records marriage and divorce on a spouse relationship', async () => {
+    const a = await request(server)
+      .post(`/api/trees/${treeId}/persons`)
+      .send({ givenName: 'Spouse A' })
+      .expect(201);
+    const b = await request(server)
+      .post(`/api/trees/${treeId}/persons`)
+      .send({ givenName: 'Spouse B' })
+      .expect(201);
+    const rel = await request(server)
+      .post(`/api/trees/${treeId}/relationships`)
+      .send({ sourcePersonId: a.body.id, targetPersonId: b.body.id, type: 'SPOUSE' })
+      .expect(201);
+
+    await request(server)
+      .patch(`/api/relationships/${rel.body.id}`)
+      .send({ marriageDate: '1990-06-01', divorced: true, divorceDate: '2005-03-02' })
+      .expect(200);
+
+    const graph = await request(server).get(`/api/trees/${treeId}`).expect(200);
+    const saved = graph.body.relationships.find((r: { id: string }) => r.id === rel.body.id);
+    expect(saved.marriageDate).toBe('1990-06-01');
+    expect(saved.divorced).toBe(true);
+    expect(saved.divorceDate).toBe('2005-03-02');
+  });
+
+  it('rejects marriage details on a parent-child relationship with 409', async () => {
+    const parent = await request(server)
+      .post(`/api/trees/${treeId}/persons`)
+      .send({ givenName: 'PC Parent' })
+      .expect(201);
+    const kid = await request(server)
+      .post(`/api/trees/${treeId}/persons`)
+      .send({ givenName: 'PC Child' })
+      .expect(201);
+    const rel = await request(server)
+      .post(`/api/trees/${treeId}/relationships`)
+      .send({ sourcePersonId: parent.body.id, targetPersonId: kid.body.id, type: 'PARENT_CHILD' })
+      .expect(201);
+
+    const res = await request(server)
+      .patch(`/api/relationships/${rel.body.id}`)
+      .send({ marriageDate: '1990-06-01' })
+      .expect(409);
+    expect(res.body.code).toBe('NOT_A_SPOUSE_RELATIONSHIP');
+  });
+
   it('rejects an invalid tree payload with 400', async () => {
     await request(server).post('/api/trees').send({ title: '' }).expect(400);
   });

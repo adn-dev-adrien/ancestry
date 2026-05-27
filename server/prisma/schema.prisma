@@ -65,6 +65,9 @@ model Relationship {
   targetPersonId String
   target         Person           @relation("RelationshipTarget", fields: [targetPersonId], references: [id], onDelete: Cascade)
   type           RelationshipType
+  marriageDate   String?
+  divorced       Boolean          @default(false)
+  divorceDate    String?
   createdAt      DateTime         @default(now())
 
   @@unique([sourcePersonId, targetPersonId, type])
