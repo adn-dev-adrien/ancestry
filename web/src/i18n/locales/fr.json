@@ -72,6 +72,10 @@
       "OTHER": "Autre"
     }
   },
+  "search": {
+    "placeholder": "Rechercher une personne…",
+    "noResults": "Aucun résultat"
+  },
   "importDialog": {
     "title": "Importer un arbre",
     "chooseTarget": "Que faire de ce fichier ?",

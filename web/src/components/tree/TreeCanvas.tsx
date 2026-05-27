@@ -20,6 +20,7 @@ interface TreeCanvasProps {
   persons: Person[];
   relationships: Relationship[];
   selectedId: string | null;
+  focusedId: string | null;
   connectMode: boolean;
   connectSourceId: string | null;
   onNodeClick: (id: string) => void;
@@ -31,6 +32,7 @@ export function TreeCanvas({
   persons,
   relationships,
   selectedId,
+  focusedId,
   connectMode,
   connectSourceId,
   onNodeClick,
@@ -47,15 +49,15 @@ export function TreeCanvas({
     setEdges(graph.edges);
   }, [persons, relationships, setNodes, setEdges]);
 
-  // Reflect selection / connect-source highlight without recomputing positions.
+  // Reflect selection / connect-source / search-focus highlight without recomputing positions.
   useEffect(() => {
     setNodes((current) =>
       current.map((n) => ({
         ...n,
-        selected: n.id === selectedId || n.id === connectSourceId,
+        selected: n.id === selectedId || n.id === connectSourceId || n.id === focusedId,
       })),
     );
-  }, [selectedId, connectSourceId, setNodes]);
+  }, [selectedId, focusedId, connectSourceId, setNodes]);
 
   return (
     <ReactFlow
