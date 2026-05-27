@@ -4,6 +4,7 @@ import type { Person, Relationship } from '@/services/types';
 
 export const NODE_WIDTH = 176;
 export const NODE_HEIGHT = 76;
+export const UNION_SIZE = 20;
 
 export interface PersonNodeData extends Record<string, unknown> {
   person: Person;
@@ -60,7 +61,7 @@ export function buildGraph(
   persons.forEach((p) => graph.setNode(p.id, { width: NODE_WIDTH, height: NODE_HEIGHT }));
   for (const fam of families) {
     const uid = unionId(fam.key);
-    graph.setNode(uid, { width: 1, height: 1 });
+    graph.setNode(uid, { width: UNION_SIZE, height: UNION_SIZE });
     fam.parents.forEach((pid) => graph.setEdge(pid, uid));
     fam.children.forEach((cid) => graph.setEdge(uid, cid));
   }
@@ -79,7 +80,8 @@ export function buildGraph(
     return {
       id: unionId(fam.key),
       type: 'union',
-      position: { x: laid?.x ?? 0, y: laid?.y ?? 0 },
+      // Center the (real-sized) junction box on the dagre point.
+      position: { x: (laid?.x ?? 0) - UNION_SIZE / 2, y: (laid?.y ?? 0) - UNION_SIZE / 2 },
       data: {},
       draggable: false,
       selectable: false,
