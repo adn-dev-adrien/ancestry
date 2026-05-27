@@ -57,6 +57,7 @@
     "photo": "Photo",
     "choosePhoto": "Choisir une photo",
     "removePhoto": "Retirer la photo",
+    "dropHint": "Glissez une photo ici",
     "notes": "Notes",
     "addPerson": "Ajouter",
     "save": "Enregistrer",

@@ -25,7 +25,8 @@ export stays tiny — no separate file storage, no extra endpoints.
   a length cap (~1,500,000 chars). Violations → HTTP 400 (existing Zod 400 contract).
 - **Display:** square avatar on the node card (left of the name); larger preview in the detail
   panel. When absent, the node/panel render as today (no avatar).
-- **Edit:** the form lets the user pick a photo (replacing any existing one) and remove it (sets `null`).
+- **Edit:** the form lets the user add a photo via a file picker **or by dragging an image onto the
+  photo zone** at the top of the person panel (replacing any existing one), and remove it (sets `null`).
 - **Export/import:** `photo` is included in the export payload and accepted on import like any other
   person field (same validation).
 

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -19,6 +19,7 @@ import {
 } from '@/components/ui/select';
 import { GENDERS } from '@/constants/gender';
 import { fileToAvatarDataUrl } from '@/utils/image';
+import { cn } from '@/lib/utils';
 import type { PersonInput } from '@/services/persons';
 import type { Person } from '@/services/types';
 
@@ -151,13 +152,24 @@ export function PersonForm({
   const birthPlaceUncertain = watch('birthPlaceUncertain');
   const photo = watch('photo');
   const photoInputRef = useRef<HTMLInputElement>(null);
+  const [dragging, setDragging] = useState(false);
 
-  const onPhotoPicked = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    event.target.value = '';
-    if (!file) return;
+  const applyPhotoFile = async (file: File | undefined) => {
+    if (!file || !file.type.startsWith('image/')) return;
     const dataUrl = await fileToAvatarDataUrl(file);
     setValue('photo', dataUrl, { shouldDirty: true, shouldValidate: true });
+  };
+
+  const onPhotoPicked = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    event.target.value = '';
+    void applyPhotoFile(file);
+  };
+
+  const onPhotoDrop = (event: React.DragEvent) => {
+    event.preventDefault();
+    setDragging(false);
+    void applyPhotoFile(event.dataTransfer.files?.[0]);
   };
 
   const setLiving = (checked: boolean) => {
@@ -173,7 +185,18 @@ export function PersonForm({
         onExplicitSave?.();
       })}
     >
-      <div className="flex items-center gap-3">
+      <div
+        className={cn(
+          'flex items-center gap-3 rounded-md border border-dashed p-3 transition-colors',
+          dragging ? 'border-primary bg-accent' : 'border-border',
+        )}
+        onDragOver={(e) => {
+          e.preventDefault();
+          setDragging(true);
+        }}
+        onDragLeave={() => setDragging(false)}
+        onDrop={onPhotoDrop}
+      >
         <div className="size-16 shrink-0 overflow-hidden rounded-md border bg-muted">
           {photo && <img src={photo} alt="" className="size-full object-cover" />}
         </div>
@@ -185,6 +208,7 @@ export function PersonForm({
             className="hidden"
             onChange={onPhotoPicked}
           />
+          <p className="text-xs text-muted-foreground">{t('form.dropHint')}</p>
           <Button
             type="button"
             variant="outline"

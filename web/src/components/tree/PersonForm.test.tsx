@@ -1,6 +1,11 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import type { Person } from '@/services/types';
+
+vi.mock('@/utils/image', () => ({
+  fileToAvatarDataUrl: vi.fn().mockResolvedValue('data:image/jpeg;base64,DROPPED'),
+}));
+
 import { PersonForm } from './PersonForm';
 
 const personWithPhoto: Person = {
@@ -81,5 +86,18 @@ describe('PersonForm validation', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Retirer la photo' }));
 
     expect(container.querySelector('img')).toBeNull();
+  });
+
+  it('accepts a photo dropped onto the photo zone', async () => {
+    const { container } = render(<PersonForm mode="create" onSubmit={vi.fn()} />);
+    const file = new File(['x'], 'face.png', { type: 'image/png' });
+
+    fireEvent.drop(screen.getByText('Glissez une photo ici'), {
+      dataTransfer: { files: [file] },
+    });
+
+    await waitFor(() =>
+      expect(container.querySelector('img')).toHaveAttribute('src', 'data:image/jpeg;base64,DROPPED'),
+    );
   });
 });
