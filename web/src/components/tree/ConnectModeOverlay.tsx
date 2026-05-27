@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 
 export type ConnectChoice =
@@ -17,31 +18,30 @@ export function ConnectModeOverlay({
   onPick,
   onCancel,
 }: ConnectModeOverlayProps) {
+  const { t } = useTranslation();
   return (
     <div className="absolute inset-x-0 top-20 z-20 flex justify-center px-4">
       <div className="w-full max-w-sm rounded-lg border bg-background p-4 shadow-xl">
-        <p className="text-sm">
-          <span className="font-semibold">{sourceName}</span> is…
-        </p>
+        <p className="text-sm">{t('connect.prompt', { source: sourceName })}</p>
         <div className="mt-3 flex flex-col gap-2">
           <Button
             variant="outline"
             onClick={() => onPick({ type: 'PARENT_CHILD', sourceIsParent: true })}
           >
-            Parent of {targetName}
+            {t('connect.parentOf', { target: targetName })}
           </Button>
           <Button
             variant="outline"
             onClick={() => onPick({ type: 'PARENT_CHILD', sourceIsParent: false })}
           >
-            Child of {targetName}
+            {t('connect.childOf', { target: targetName })}
           </Button>
           <Button variant="outline" onClick={() => onPick({ type: 'SPOUSE' })}>
-            Spouse of {targetName}
+            {t('connect.spouseOf', { target: targetName })}
           </Button>
         </div>
         <Button variant="ghost" size="sm" className="mt-3 w-full" onClick={onCancel}>
-          Cancel
+          {t('connect.cancel')}
         </Button>
       </div>
     </div>

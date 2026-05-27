@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import {
   Drawer,
@@ -34,6 +35,7 @@ function RelativeList({
   ids: string[];
   byId: Map<string, Person>;
 }) {
+  const { t } = useTranslation();
   if (ids.length === 0) return null;
   return (
     <div>
@@ -41,7 +43,7 @@ function RelativeList({
       <ul className="mt-1 space-y-0.5 text-sm">
         {ids.map((id) => {
           const relative = byId.get(id);
-          return <li key={id}>{relative ? fullName(relative) : 'Unknown'}</li>;
+          return <li key={id}>{relative ? fullName(relative) : t('common.unknown')}</li>;
         })}
       </ul>
     </div>
@@ -58,6 +60,7 @@ function PanelBody({
   onExplicitSave,
   onDelete,
 }: Omit<PersonDetailPanelProps, 'open' | 'onClose'>) {
+  const { t } = useTranslation();
   const byId = new Map(persons.map((p) => [p.id, p]));
   return (
     <div className="flex flex-col gap-6 px-4 pb-6">
@@ -72,9 +75,9 @@ function PanelBody({
       />
       {mode === 'edit' && person && (
         <div className="space-y-3 border-t pt-4">
-          <RelativeList label="Parents" ids={parentsOf(person.id, relationships)} byId={byId} />
-          <RelativeList label="Children" ids={childrenOf(person.id, relationships)} byId={byId} />
-          <RelativeList label="Spouses" ids={spousesOf(person.id, relationships)} byId={byId} />
+          <RelativeList label={t('panel.parents')} ids={parentsOf(person.id, relationships)} byId={byId} />
+          <RelativeList label={t('panel.children')} ids={childrenOf(person.id, relationships)} byId={byId} />
+          <RelativeList label={t('panel.spouses')} ids={spousesOf(person.id, relationships)} byId={byId} />
         </div>
       )}
     </div>
@@ -82,9 +85,10 @@ function PanelBody({
 }
 
 export function PersonDetailPanel(props: PersonDetailPanelProps) {
+  const { t } = useTranslation();
   const { open, mode, onClose } = props;
   const isDesktop = useMediaQuery('(min-width: 768px)');
-  const title = mode === 'create' ? 'New person' : 'Edit person';
+  const title = mode === 'create' ? t('panel.newPerson') : t('panel.editPerson');
 
   if (isDesktop) {
     return (

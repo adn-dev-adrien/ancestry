@@ -1,14 +1,19 @@
 import { memo } from 'react';
 import { Handle, Position, type NodeProps } from '@xyflow/react';
-import { GENDER_LABELS, GENDER_NODE_CLASSES, NEUTRAL_NODE_CLASS } from '@/constants/gender';
+import { useTranslation } from 'react-i18next';
+import { GENDER_NODE_CLASSES, NEUTRAL_NODE_CLASS } from '@/constants/gender';
 import type { PersonNode as PersonNodeType } from '@/utils/layout';
 import { NODE_HEIGHT, NODE_WIDTH } from '@/utils/layout';
 import { fullName, lifeSpan } from '@/utils/person';
 import { cn } from '@/lib/utils';
 
 function PersonNodeComponent({ data, selected }: NodeProps<PersonNodeType>) {
+  const { t } = useTranslation();
   const { person } = data;
-  const span = lifeSpan(person);
+  const span = lifeSpan(person, {
+    born: t('person.bornPrefix'),
+    death: t('person.deathPrefix'),
+  });
   const tint = person.gender ? GENDER_NODE_CLASSES[person.gender] : NEUTRAL_NODE_CLASS;
 
   return (
@@ -31,7 +36,7 @@ function PersonNodeComponent({ data, selected }: NodeProps<PersonNodeType>) {
       )}
       {person.gender && (
         <span className="mt-1 w-fit rounded bg-muted px-1.5 py-0.5 text-[10px] uppercase tracking-wide text-muted-foreground">
-          {GENDER_LABELS[person.gender]}
+          {t(`person.gender.${person.gender}`)}
         </span>
       )}
       <Handle type="source" position={Position.Bottom} className="!bg-muted-foreground" />

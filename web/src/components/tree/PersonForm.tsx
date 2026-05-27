@@ -1,7 +1,9 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import { useTranslation } from 'react-i18next';
+import type { TFunction } from 'i18next';
 import { Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -15,38 +17,51 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { GENDERS, GENDER_LABELS } from '@/constants/gender';
+import { GENDERS } from '@/constants/gender';
 import type { PersonInput } from '@/services/persons';
 import type { Person } from '@/services/types';
 
-const optionalDate = z
-  .string()
-  .regex(/^\d{4}-\d{2}-\d{2}$/, 'Use YYYY-MM-DD')
-  .or(z.literal(''));
+interface PersonFormValues {
+  givenName: string;
+  birthName: string;
+  familyName: string;
+  birthDate: string;
+  deathDate: string;
+  living: boolean;
+  birthPlace: string;
+  birthPlaceUncertain: boolean;
+  gender: '' | 'MALE' | 'FEMALE' | 'OTHER';
+  notes: string;
+}
 
-const personFormSchema = z
-  .object({
-    givenName: z.string().trim().min(1, 'Given name is required').max(100),
-    birthName: z.string().max(100),
-    familyName: z.string().max(100),
-    birthDate: optionalDate,
-    deathDate: optionalDate,
-    living: z.boolean(),
-    birthPlace: z.string().max(200),
-    birthPlaceUncertain: z.boolean(),
-    gender: z.enum(['', 'MALE', 'FEMALE', 'OTHER']),
-    notes: z.string().max(2000),
-  })
-  .refine((d) => !(d.birthDate && d.deathDate) || d.deathDate >= d.birthDate, {
-    message: 'Death date must be on or after birth date',
-    path: ['deathDate'],
-  })
-  .refine((d) => !(d.living && d.deathDate), {
-    message: 'A living person cannot have a death date',
-    path: ['deathDate'],
-  });
+function makeSchema(t: TFunction) {
+  const optionalDate = z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/, t('form.errDateFormat'))
+    .or(z.literal(''));
 
-type PersonFormValues = z.infer<typeof personFormSchema>;
+  return z
+    .object({
+      givenName: z.string().trim().min(1, t('form.errGivenNameRequired')).max(100),
+      birthName: z.string().max(100),
+      familyName: z.string().max(100),
+      birthDate: optionalDate,
+      deathDate: optionalDate,
+      living: z.boolean(),
+      birthPlace: z.string().max(200),
+      birthPlaceUncertain: z.boolean(),
+      gender: z.enum(['', 'MALE', 'FEMALE', 'OTHER']),
+      notes: z.string().max(2000),
+    })
+    .refine((d) => !(d.birthDate && d.deathDate) || d.deathDate >= d.birthDate, {
+      message: t('form.errDeathBeforeBirth'),
+      path: ['deathDate'],
+    })
+    .refine((d) => !(d.living && d.deathDate), {
+      message: t('form.errLivingWithDeath'),
+      path: ['deathDate'],
+    });
+}
 
 function toFormValues(person?: Person): PersonFormValues {
   return {
@@ -95,6 +110,9 @@ export function PersonForm({
   onDelete,
   isSaving,
 }: PersonFormProps) {
+  const { t } = useTranslation();
+  const schema = useMemo(() => makeSchema(t), [t]);
+
   const {
     register,
     handleSubmit,
@@ -103,7 +121,7 @@ export function PersonForm({
     setValue,
     formState: { errors, isValid, isDirty },
   } = useForm<PersonFormValues>({
-    resolver: zodResolver(personFormSchema),
+    resolver: zodResolver(schema),
     mode: 'onChange',
     defaultValues: toFormValues(person),
   });
@@ -141,7 +159,7 @@ export function PersonForm({
       })}
     >
       <div className="grid gap-1.5">
-        <Label htmlFor="givenName">Given name</Label>
+        <Label htmlFor="givenName">{t('form.givenName')}</Label>
         <Input id="givenName" {...register('givenName')} autoComplete="off" />
         {errors.givenName && (
           <p className="text-xs text-destructive">{errors.givenName.message}</p>
@@ -149,22 +167,22 @@ export function PersonForm({
       </div>
 
       <div className="grid gap-1.5">
-        <Label htmlFor="birthName">Birth name</Label>
+        <Label htmlFor="birthName">{t('form.birthName')}</Label>
         <Input id="birthName" {...register('birthName')} autoComplete="off" />
       </div>
 
       <div className="grid gap-1.5">
-        <Label htmlFor="familyName">Family name</Label>
+        <Label htmlFor="familyName">{t('form.familyName')}</Label>
         <Input id="familyName" {...register('familyName')} autoComplete="off" />
       </div>
 
       <div className="grid grid-cols-2 gap-3">
         <div className="grid gap-1.5">
-          <Label htmlFor="birthDate">Birth date</Label>
+          <Label htmlFor="birthDate">{t('form.birthDate')}</Label>
           <Input id="birthDate" type="date" {...register('birthDate')} />
         </div>
         <div className="grid gap-1.5">
-          <Label htmlFor="deathDate">Death date</Label>
+          <Label htmlFor="deathDate">{t('form.deathDate')}</Label>
           <Input id="deathDate" type="date" disabled={living} {...register('deathDate')} />
           {errors.deathDate && (
             <p className="text-xs text-destructive">{errors.deathDate.message}</p>
@@ -175,20 +193,20 @@ export function PersonForm({
       <label className="flex items-center gap-2 text-sm">
         <Checkbox
           id="living"
-          aria-label="Living"
+          aria-label={t('form.living')}
           checked={living}
           onCheckedChange={(checked) => setLiving(checked === true)}
         />
-        Living (no death date)
+        {t('form.living')}
       </label>
 
       <div className="grid gap-1.5">
-        <Label htmlFor="birthPlace">Birth place</Label>
+        <Label htmlFor="birthPlace">{t('form.birthPlace')}</Label>
         <Input id="birthPlace" {...register('birthPlace')} autoComplete="off" />
         <label className="flex items-center gap-2 text-sm text-muted-foreground">
           <Checkbox
             id="birthPlaceUncertain"
-            aria-label="Uncertain birth place"
+            aria-label={t('form.uncertain')}
             checked={birthPlaceUncertain}
             onCheckedChange={(checked) =>
               setValue('birthPlaceUncertain', checked === true, {
@@ -197,12 +215,12 @@ export function PersonForm({
               })
             }
           />
-          Uncertain
+          {t('form.uncertain')}
         </label>
       </div>
 
       <div className="grid gap-1.5">
-        <Label htmlFor="gender">Gender</Label>
+        <Label htmlFor="gender">{t('form.gender')}</Label>
         <Select
           value={gender || undefined}
           onValueChange={(value) =>
@@ -213,12 +231,12 @@ export function PersonForm({
           }
         >
           <SelectTrigger id="gender">
-            <SelectValue placeholder="Unspecified" />
+            <SelectValue placeholder={t('form.genderPlaceholder')} />
           </SelectTrigger>
           <SelectContent>
             {GENDERS.map((g) => (
               <SelectItem key={g} value={g}>
-                {GENDER_LABELS[g]}
+                {t(`person.gender.${g}`)}
               </SelectItem>
             ))}
           </SelectContent>
@@ -226,20 +244,20 @@ export function PersonForm({
       </div>
 
       <div className="grid gap-1.5">
-        <Label htmlFor="notes">Notes</Label>
+        <Label htmlFor="notes">{t('form.notes')}</Label>
         <Textarea id="notes" rows={3} {...register('notes')} />
       </div>
 
       <div className="flex items-center justify-between gap-2 pt-1">
         {onDelete ? (
           <Button type="button" variant="destructive" size="sm" onClick={onDelete}>
-            <Trash2 className="size-4" /> Delete
+            <Trash2 className="size-4" /> {t('form.delete')}
           </Button>
         ) : (
           <span />
         )}
         <Button type="submit" size="sm" disabled={!isValid || isSaving}>
-          {mode === 'create' ? 'Add person' : 'Save'}
+          {mode === 'create' ? t('form.addPerson') : t('form.save')}
         </Button>
       </div>
     </form>
