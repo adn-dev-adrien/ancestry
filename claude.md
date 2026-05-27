@@ -39,7 +39,7 @@ The default loop is **spec-driven, plan-validated, autonomously implemented**.
 4. **Produce an implementation plan** describing files touched, DB impact, test plan, and UI changes.
 5. **User validates the plan.**
 6. **Implement** on the current branch: code, tests, UI verification, CHANGELOG update, spec status → `Implemented`.
-7. **Hand off to the user** with a concise summary. The user handles git operations: branch, commit, push, PR.
+7. **Hand off to the user** with a concise summary and the PR URL. Claude handles branch, commit, push, and PR creation; the user reviews and merges.
 
 ### 3.2 When to skip the spec
 
@@ -91,7 +91,8 @@ The spec is the source of truth for *why*. Code answers *what*.
 3. Stage explicit files only — never `git add -A` or `git add .`.
 4. Commit with a Conventional Commit message in English and include a brief bullet list.
 5. Push to origin: `git push -u origin feature/<short-kebab-name>`.
-6. Hand off the PR URL. The user creates the PR and reviews it.
+6. Open the PR against `master` with `gh pr create` (Conventional Commit title, English body).
+   Hand off the PR URL. The user reviews and merges.
 7. After merge, return to master and pull:
    ```bash
    git checkout master && git pull
@@ -101,7 +102,7 @@ The spec is the source of truth for *why*. Code answers *what*.
 
 - Push to `master` directly.
 - Force-push.
-- Open, comment, or merge PRs.
+- Comment on or merge PRs (Claude opens PRs; the user reviews and merges).
 - Push to `release` branch.
 - Skip hooks or amend pushed commits.
 

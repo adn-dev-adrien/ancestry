@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { ReactFlowProvider } from '@xyflow/react';
+import { useTranslation } from 'react-i18next';
+import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { useTree } from '@/hooks/useTree';
 import { usePersonMutations } from '@/hooks/usePersonMutations';
 import { useRelationshipMutations } from '@/hooks/useRelationshipMutations';
@@ -20,6 +22,7 @@ import {
 type PanelState = { mode: 'create' } | { mode: 'edit'; personId: string } | null;
 
 export function TreePage() {
+  const { t } = useTranslation();
   const { treeId = '' } = useParams();
   const { data: tree, isLoading } = useTree(treeId);
   const persons = tree?.persons ?? [];
@@ -37,8 +40,16 @@ export function TreePage() {
   const [error, setError] = useState<string | null>(null);
 
   const byId = (id: string | null) => persons.find((p) => p.id === id);
-  const showError = (e: unknown) =>
-    setError(e instanceof ApiError ? e.message : 'Something went wrong');
+  const showError = useCallback(
+    (e: unknown) => {
+      if (e instanceof ApiError) {
+        setError(e.body.code ? t(`errors.${e.body.code}`, { defaultValue: e.message }) : e.message);
+      } else {
+        setError(t('tree.errorGeneric'));
+      }
+    },
+    [t],
+  );
 
   // ---- Position autosave (1s debounce + explicit flush) ----
   const pending = useRef<Map<string, { x: number; y: number }>>(new Map());
@@ -59,7 +70,7 @@ export function TreePage() {
       showError(e);
       setSaveStatus('dirty');
     }
-  }, [personMutations.savePosition]);
+  }, [personMutations.savePosition, showError]);
 
   const onPositionChange = (id: string, x: number, y: number) => {
     pending.current.set(id, { x, y });
@@ -149,7 +160,7 @@ export function TreePage() {
     if (panel?.mode !== 'edit') return;
     const person = byId(panel.personId);
     const confirmed = window.confirm(
-      `Delete ${person ? fullName(person) : 'this person'} and all their relationships?`,
+      t('tree.deleteConfirm', { name: person ? fullName(person) : t('common.unknown') }),
     );
     if (!confirmed) return;
     personMutations.remove.mutate(panel.personId, {
@@ -162,17 +173,25 @@ export function TreePage() {
     panel?.mode === 'edit' ? byId(panel.personId) : undefined;
 
   if (isLoading) {
-    return <div className="grid min-h-dvh place-items-center text-muted-foreground">Loading…</div>;
+    return (
+      <div className="grid min-h-dvh place-items-center text-muted-foreground">
+        {t('common.loading')}
+      </div>
+    );
   }
   if (!tree) {
-    return <div className="grid min-h-dvh place-items-center text-muted-foreground">Tree not found.</div>;
+    return (
+      <div className="grid min-h-dvh place-items-center text-muted-foreground">
+        {t('tree.notFound')}
+      </div>
+    );
   }
 
   return (
     <ReactFlowProvider>
       <div className="relative h-dvh w-full">
         <input
-          aria-label="Tree title"
+          aria-label={t('tree.titleAria')}
           defaultValue={tree.title}
           key={tree.title}
           onBlur={(e) => {
@@ -183,6 +202,8 @@ export function TreePage() {
           }}
           className="absolute left-4 top-4 z-10 max-w-[50%] truncate rounded bg-transparent px-1 text-lg font-semibold outline-none focus:bg-background focus:ring-1 focus:ring-ring"
         />
+
+        <LanguageSwitcher className="absolute right-4 top-4 z-10" />
 
         <TreeCanvas
           persons={persons}

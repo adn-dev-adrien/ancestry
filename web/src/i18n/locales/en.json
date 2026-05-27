@@ -1,0 +1,88 @@
+{
+  "common": {
+    "loading": "Loading…",
+    "cancel": "Cancel",
+    "create": "Create",
+    "save": "Save",
+    "delete": "Delete",
+    "unknown": "Unknown"
+  },
+  "home": {
+    "newTree": "New tree",
+    "people_one": "{{count}} person",
+    "people_other": "{{count}} people",
+    "emptyTitle": "Start your first tree",
+    "emptyDescription": "Create a family tree, add people, and link them together.",
+    "dialogTitle": "New tree",
+    "titleLabel": "Title",
+    "descriptionLabel": "Description"
+  },
+  "tree": {
+    "notFound": "Tree not found.",
+    "titleAria": "Tree title",
+    "errorGeneric": "Something went wrong",
+    "deleteConfirm": "Delete {{name}} and all their relationships?"
+  },
+  "toolbar": {
+    "back": "Back to trees",
+    "fitView": "Fit view",
+    "addPerson": "Add person",
+    "connectMode": "Connect mode",
+    "save": "Save",
+    "statusIdle": "Saved",
+    "statusDirty": "Unsaved changes",
+    "statusSaving": "Saving…",
+    "statusSaved": "Saved"
+  },
+  "panel": {
+    "newPerson": "New person",
+    "editPerson": "Edit person",
+    "parents": "Parents",
+    "children": "Children",
+    "spouses": "Spouses"
+  },
+  "form": {
+    "givenName": "Given name",
+    "birthName": "Birth name",
+    "familyName": "Family name",
+    "birthDate": "Birth date",
+    "deathDate": "Death date",
+    "living": "Living (no death date)",
+    "birthPlace": "Birth place",
+    "uncertain": "Uncertain",
+    "gender": "Gender",
+    "genderPlaceholder": "Unspecified",
+    "notes": "Notes",
+    "addPerson": "Add person",
+    "save": "Save",
+    "delete": "Delete",
+    "errGivenNameRequired": "Given name is required",
+    "errDateFormat": "Use YYYY-MM-DD",
+    "errDeathBeforeBirth": "Death date must be on or after birth date",
+    "errLivingWithDeath": "A living person cannot have a death date"
+  },
+  "person": {
+    "bornPrefix": "b.",
+    "deathPrefix": "d.",
+    "gender": {
+      "MALE": "Male",
+      "FEMALE": "Female",
+      "OTHER": "Other"
+    }
+  },
+  "connect": {
+    "prompt": "{{source}} is…",
+    "parentOf": "Parent of {{target}}",
+    "childOf": "Child of {{target}}",
+    "spouseOf": "Spouse of {{target}}",
+    "cancel": "Cancel"
+  },
+  "errors": {
+    "RELATIONSHIP_CYCLE": "This relationship would create a cycle in the tree",
+    "DUPLICATE_RELATIONSHIP": "This relationship already exists",
+    "CROSS_TREE_REFERENCE": "Both persons must belong to the same tree",
+    "MIXED_RELATIONSHIP_PAIR": "A pair cannot be both parent-child and spouse",
+    "SELF_RELATIONSHIP": "A person cannot have a relationship with themselves",
+    "INVALID_DATE_RANGE": "Death date must be on or after birth date"
+  }
+}

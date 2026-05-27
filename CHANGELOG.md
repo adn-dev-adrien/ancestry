@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- Internationalization (FR/EN) with a flag language switcher; French by default, choice persisted
+  in localStorage. All UI strings, validation messages, and server error codes are localized.
 - Person extra fields: birth name, "living" flag (locks the death date; server rejects a living
   person with a death date), and birth place with an "uncertain" marker (shown as " ?" on the node).
 - Gender colors on the graph: female nodes pink, male nodes blue, others neutral.

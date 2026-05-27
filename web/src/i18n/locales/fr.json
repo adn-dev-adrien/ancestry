@@ -1,0 +1,88 @@
+{
+  "common": {
+    "loading": "Chargement…",
+    "cancel": "Annuler",
+    "create": "Créer",
+    "save": "Enregistrer",
+    "delete": "Supprimer",
+    "unknown": "Inconnu"
+  },
+  "home": {
+    "newTree": "Nouvel arbre",
+    "people_one": "{{count}} personne",
+    "people_other": "{{count}} personnes",
+    "emptyTitle": "Créez votre premier arbre",
+    "emptyDescription": "Créez un arbre généalogique, ajoutez des personnes et reliez-les.",
+    "dialogTitle": "Nouvel arbre",
+    "titleLabel": "Titre",
+    "descriptionLabel": "Description"
+  },
+  "tree": {
+    "notFound": "Arbre introuvable.",
+    "titleAria": "Titre de l'arbre",
+    "errorGeneric": "Une erreur est survenue",
+    "deleteConfirm": "Supprimer {{name}} et toutes ses relations ?"
+  },
+  "toolbar": {
+    "back": "Retour aux arbres",
+    "fitView": "Ajuster la vue",
+    "addPerson": "Ajouter une personne",
+    "connectMode": "Mode connexion",
+    "save": "Enregistrer",
+    "statusIdle": "Enregistré",
+    "statusDirty": "Modifications non enregistrées",
+    "statusSaving": "Enregistrement…",
+    "statusSaved": "Enregistré"
+  },
+  "panel": {
+    "newPerson": "Nouvelle personne",
+    "editPerson": "Modifier la personne",
+    "parents": "Parents",
+    "children": "Enfants",
+    "spouses": "Conjoints"
+  },
+  "form": {
+    "givenName": "Prénom",
+    "birthName": "Nom de naissance",
+    "familyName": "Nom de famille",
+    "birthDate": "Date de naissance",
+    "deathDate": "Date de décès",
+    "living": "En vie (pas de date de décès)",
+    "birthPlace": "Lieu de naissance",
+    "uncertain": "Incertain",
+    "gender": "Genre",
+    "genderPlaceholder": "Non précisé",
+    "notes": "Notes",
+    "addPerson": "Ajouter",
+    "save": "Enregistrer",
+    "delete": "Supprimer",
+    "errGivenNameRequired": "Le prénom est requis",
+    "errDateFormat": "Format AAAA-MM-JJ",
+    "errDeathBeforeBirth": "La date de décès doit être postérieure ou égale à la date de naissance",
+    "errLivingWithDeath": "Une personne en vie ne peut pas avoir de date de décès"
+  },
+  "person": {
+    "bornPrefix": "n.",
+    "deathPrefix": "†",
+    "gender": {
+      "MALE": "Homme",
+      "FEMALE": "Femme",
+      "OTHER": "Autre"
+    }
+  },
+  "connect": {
+    "prompt": "{{source}} est…",
+    "parentOf": "Parent de {{target}}",
+    "childOf": "Enfant de {{target}}",
+    "spouseOf": "Conjoint de {{target}}",
+    "cancel": "Annuler"
+  },
+  "errors": {
+    "RELATIONSHIP_CYCLE": "Cette relation créerait un cycle dans l'arbre",
+    "DUPLICATE_RELATIONSHIP": "Cette relation existe déjà",
+    "CROSS_TREE_REFERENCE": "Les deux personnes doivent appartenir au même arbre",
+    "MIXED_RELATIONSHIP_PAIR": "Une même paire ne peut pas être à la fois parent-enfant et conjoints",
+    "SELF_RELATIONSHIP": "Une personne ne peut pas avoir de relation avec elle-même",
+    "INVALID_DATE_RANGE": "La date de décès doit être postérieure ou égale à la date de naissance"
+  }
+}
