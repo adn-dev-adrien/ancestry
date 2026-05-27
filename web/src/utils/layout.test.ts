@@ -41,34 +41,72 @@ const rel = (
 });
 
 describe('buildGraph', () => {
-  it('returns a node per person and an edge per relationship', () => {
-    const persons = [person('A'), person('B'), person('C')];
-    const relationships = [rel('r1', 'A', 'B', 'PARENT_CHILD'), rel('r2', 'B', 'C', 'SPOUSE')];
+  it('routes a couple and their children through one union (family bus)', () => {
+    const persons = [person('A'), person('B'), person('C'), person('D')];
+    const relationships = [
+      rel('r1', 'A', 'C', 'PARENT_CHILD'),
+      rel('r2', 'B', 'C', 'PARENT_CHILD'),
+      rel('r3', 'A', 'D', 'PARENT_CHILD'),
+      rel('r4', 'B', 'D', 'PARENT_CHILD'),
+    ];
 
     const { nodes, edges } = buildGraph(persons, relationships);
 
-    expect(nodes).toHaveLength(3);
-    expect(edges).toHaveLength(2);
-    const parentChild = edges.find((e) => e.id === 'r1');
-    const spouse = edges.find((e) => e.id === 'r2');
-    expect(parentChild?.type).toBe('parentChild');
-    expect(parentChild?.markerEnd).toBeDefined();
+    const unions = nodes.filter((n) => n.type === 'union');
+    expect(unions).toHaveLength(1);
+    const uid = unions[0].id;
+
+    // Both parents connect into the union; one connector fans out to each child.
+    const parentEdges = edges.filter((e) => e.target === uid);
+    const childEdges = edges.filter((e) => e.source === uid);
+    expect(parentEdges.map((e) => e.source).sort()).toEqual(['A', 'B']);
+    expect(childEdges.map((e) => e.target).sort()).toEqual(['C', 'D']);
+    childEdges.forEach((e) => expect(e.markerEnd).toBeDefined());
+
+    // No direct person→person parent-child edge remains.
+    expect(edges.some((e) => e.type === 'parentChild' && e.source === 'A' && e.target === 'C')).toBe(
+      false,
+    );
+    // Union nodes are not interactive.
+    expect(unions[0].selectable).toBe(false);
+    expect(unions[0].draggable).toBe(false);
+  });
+
+  it('still creates a union for a single parent', () => {
+    const { nodes, edges } = buildGraph(
+      [person('A'), person('B')],
+      [rel('r1', 'A', 'B', 'PARENT_CHILD')],
+    );
+    const union = nodes.find((n) => n.type === 'union');
+    expect(union).toBeDefined();
+    expect(edges.filter((e) => e.target === union!.id)).toHaveLength(1);
+    expect(edges.filter((e) => e.source === union!.id)).toHaveLength(1);
+  });
+
+  it('creates no union when there are no parent-child links', () => {
+    const { nodes } = buildGraph([person('A')], []);
+    expect(nodes.filter((n) => n.type === 'union')).toHaveLength(0);
+  });
+
+  it('keeps spouse links horizontal with their badge data', () => {
+    const { edges } = buildGraph(
+      [person('A'), person('B')],
+      [rel('r1', 'A', 'B', 'SPOUSE')],
+    );
+    const spouse = edges.find((e) => e.id === 'r1');
     expect(spouse?.type).toBe('spouse');
     expect(spouse?.data?.divorced).toBe(false);
-    // Spouse links attach to the vertical sides (horizontal link).
     expect(spouse?.sourceHandle).toBe('spouse-right');
     expect(spouse?.targetHandle).toBe('spouse-left');
   });
 
   it('honors stored x/y over the dagre layout', () => {
-    const persons = [person('A', { x: 500, y: 320 })];
-    const { nodes } = buildGraph(persons, []);
+    const { nodes } = buildGraph([person('A', { x: 500, y: 320 })], []);
     expect(nodes[0].position).toEqual({ x: 500, y: 320 });
   });
 
   it('falls back to a computed position when x/y are absent', () => {
-    const persons = [person('A')];
-    const { nodes } = buildGraph(persons, []);
+    const { nodes } = buildGraph([person('A')], []);
     expect(typeof nodes[0].position.x).toBe('number');
     expect(typeof nodes[0].position.y).toBe('number');
   });

@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Changed
+- Parent-child links use a "family bus": a couple's children share one junction with a single
+  branching connector instead of many crossing diagonals; the baby icon now appears once on the
+  family junction instead of on every link.
 - Zoom-adaptive node detail: zoomed out shows only the name, a bit closer adds the photo, and
   closer still shows all fields — keeping content legible. Node size stays constant. The name font
   is counter-scaled when zoomed out so names stay readable at low zoom.
