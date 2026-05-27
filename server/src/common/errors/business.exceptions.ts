@@ -6,7 +6,8 @@ export type BusinessRuleCode =
   | 'CROSS_TREE_REFERENCE'
   | 'MIXED_RELATIONSHIP_PAIR'
   | 'SELF_RELATIONSHIP'
-  | 'INVALID_DATE_RANGE';
+  | 'INVALID_DATE_RANGE'
+  | 'NOT_A_SPOUSE_RELATIONSHIP';
 
 export class BusinessRuleException extends HttpException {
   constructor(

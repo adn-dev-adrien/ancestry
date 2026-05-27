@@ -36,6 +36,9 @@ export interface Relationship {
   sourcePersonId: string;
   targetPersonId: string;
   type: RelationshipType;
+  marriageDate: string | null;
+  divorced: boolean;
+  divorceDate: string | null;
   createdAt: string;
 }
 

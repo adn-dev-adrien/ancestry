@@ -10,6 +10,9 @@ const importRelationshipSchema = z.object({
   sourcePersonId: z.string().min(1),
   targetPersonId: z.string().min(1),
   type: z.nativeEnum(RelationshipType),
+  marriageDate: z.string().nullable().optional(),
+  divorced: z.boolean().optional(),
+  divorceDate: z.string().nullable().optional(),
 });
 
 export const exportPayloadSchema = z

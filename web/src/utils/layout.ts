@@ -56,8 +56,7 @@ export function buildGraph(
           source: r.sourcePersonId,
           target: r.targetPersonId,
           type: 'spouse',
-          style: { strokeDasharray: '6 4' },
-          data: { spouse: true },
+          data: { divorced: r.divorced },
         },
   );
 

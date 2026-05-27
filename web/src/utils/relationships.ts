@@ -21,3 +21,20 @@ export function spousesOf(personId: string, relationships: Relationship[]): stri
     )
     .map((r) => (r.sourcePersonId === personId ? r.targetPersonId : r.sourcePersonId));
 }
+
+/** Spouse relationship rows for a person, with the partner's id resolved. */
+export function spouseRelationships(
+  personId: string,
+  relationships: Relationship[],
+): { relationship: Relationship; partnerId: string }[] {
+  return relationships
+    .filter(
+      (r) =>
+        r.type === 'SPOUSE' &&
+        (r.sourcePersonId === personId || r.targetPersonId === personId),
+    )
+    .map((r) => ({
+      relationship: r,
+      partnerId: r.sourcePersonId === personId ? r.targetPersonId : r.sourcePersonId,
+    }));
+}

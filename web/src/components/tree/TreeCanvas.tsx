@@ -29,6 +29,7 @@ interface TreeCanvasProps {
   onNodeClick: (id: string) => void;
   onPaneClick: () => void;
   onPositionChange: (id: string, x: number, y: number) => void;
+  onSpouseEdgeClick: (relationshipId: string) => void;
 }
 
 export function TreeCanvas({
@@ -40,6 +41,7 @@ export function TreeCanvas({
   connectSourceId,
   onNodeClick,
   onPaneClick,
+  onSpouseEdgeClick,
   onPositionChange,
 }: TreeCanvasProps) {
   const [nodes, setNodes, onNodesChange] = useNodesState<Node>([]);
@@ -74,6 +76,9 @@ export function TreeCanvas({
       onNodeDragStop={(_event, node: Node) =>
         onPositionChange(node.id, node.position.x, node.position.y)
       }
+      onEdgeClick={(_event, edge: Edge) => {
+        if (edge.type === 'spouse') onSpouseEdgeClick(edge.id);
+      }}
       onPaneClick={onPaneClick}
       nodesConnectable={false}
       fitView

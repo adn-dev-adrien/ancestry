@@ -4,12 +4,15 @@ import {
   Delete,
   HttpCode,
   Param,
+  Patch,
   Post,
 } from '@nestjs/common';
 import { ZodValidationPipe } from '../../../common/pipes/zod-validation.pipe';
 import {
   CreateRelationshipDto,
+  UpdateRelationshipDto,
   createRelationshipSchema,
+  updateRelationshipSchema,
 } from '../dto/relationship.dto';
 import { RelationshipsService } from '../services/relationships.service';
 
@@ -29,6 +32,14 @@ export class TreeRelationshipsController {
 @Controller('relationships')
 export class RelationshipsController {
   constructor(private readonly service: RelationshipsService) {}
+
+  @Patch(':relationshipId')
+  update(
+    @Param('relationshipId') relationshipId: string,
+    @Body(new ZodValidationPipe(updateRelationshipSchema)) dto: UpdateRelationshipDto,
+  ) {
+    return this.service.update(relationshipId, dto);
+  }
 
   @Delete(':relationshipId')
   @HttpCode(204)

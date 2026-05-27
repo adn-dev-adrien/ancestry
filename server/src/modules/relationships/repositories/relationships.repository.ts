@@ -35,6 +35,17 @@ export class RelationshipsRepository {
     });
   }
 
+  findById(id: string) {
+    return this.prisma.relationship.findUnique({ where: { id } });
+  }
+
+  update(
+    id: string,
+    data: { marriageDate?: string | null; divorced?: boolean; divorceDate?: string | null },
+  ) {
+    return this.prisma.relationship.update({ where: { id }, data });
+  }
+
   delete(id: string) {
     return this.prisma.relationship.delete({ where: { id } });
   }

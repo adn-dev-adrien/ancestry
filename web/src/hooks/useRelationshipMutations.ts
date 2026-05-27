@@ -1,5 +1,10 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { createRelationship, deleteRelationship } from '@/services/relationships';
+import {
+  createRelationship,
+  deleteRelationship,
+  updateRelationship,
+  type MarriageInput,
+} from '@/services/relationships';
 import type { RelationshipType } from '@/services/types';
 
 export function useRelationshipMutations(treeId: string) {
@@ -16,10 +21,15 @@ export function useRelationshipMutations(treeId: string) {
     onSuccess: invalidate,
   });
 
+  const update = useMutation({
+    mutationFn: ({ id, ...body }: { id: string } & MarriageInput) => updateRelationship(id, body),
+    onSuccess: invalidate,
+  });
+
   const remove = useMutation({
     mutationFn: (id: string) => deleteRelationship(id),
     onSuccess: invalidate,
   });
 
-  return { create, remove };
+  return { create, update, remove };
 }

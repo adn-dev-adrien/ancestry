@@ -34,6 +34,9 @@ const rel = (
   sourcePersonId: source,
   targetPersonId: target,
   type,
+  marriageDate: null,
+  divorced: false,
+  divorceDate: null,
   createdAt: '',
 });
 
@@ -51,7 +54,7 @@ describe('buildGraph', () => {
     expect(parentChild?.type).toBe('parentChild');
     expect(parentChild?.markerEnd).toBeDefined();
     expect(spouse?.type).toBe('spouse');
-    expect(spouse?.style?.strokeDasharray).toBe('6 4');
+    expect(spouse?.data?.divorced).toBe(false);
   });
 
   it('honors stored x/y over the dagre layout', () => {

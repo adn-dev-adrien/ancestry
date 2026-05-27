@@ -43,6 +43,12 @@
     "children": "Enfants",
     "spouses": "Conjoints"
   },
+  "marriage": {
+    "title": "Mariage",
+    "date": "Date de mariage",
+    "divorced": "Divorcé",
+    "divorceDate": "Date de divorce"
+  },
   "form": {
     "givenName": "Prénom",
     "birthName": "Nom de naissance",

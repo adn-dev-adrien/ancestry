@@ -9,7 +9,7 @@ import {
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import type { PersonInput } from '@/services/persons';
 import type { Person, Relationship } from '@/services/types';
-import { childrenOf, parentsOf, spousesOf } from '@/utils/relationships';
+import { childrenOf, parentsOf, spouseRelationships } from '@/utils/relationships';
 import { fullName } from '@/utils/person';
 import { PersonForm } from './PersonForm';
 
@@ -24,6 +24,18 @@ interface PersonDetailPanelProps {
   onSubmit: (input: PersonInput) => void;
   onExplicitSave?: () => void;
   onDelete?: () => void;
+  onEditMarriage?: (relationship: Relationship) => void;
+}
+
+function year(date: string | null): string {
+  return date ? date.slice(0, 4) : '';
+}
+
+function marriageSummary(rel: Relationship): string {
+  const parts: string[] = [];
+  if (rel.marriageDate) parts.push(`⚭ ${year(rel.marriageDate)}`);
+  if (rel.divorced) parts.push(`⚯ ${year(rel.divorceDate)}`.trim());
+  return parts.join(' · ');
 }
 
 function RelativeList({
@@ -50,6 +62,47 @@ function RelativeList({
   );
 }
 
+function SpouseList({
+  personId,
+  relationships,
+  byId,
+  onEditMarriage,
+}: {
+  personId: string;
+  relationships: Relationship[];
+  byId: Map<string, Person>;
+  onEditMarriage?: (relationship: Relationship) => void;
+}) {
+  const { t } = useTranslation();
+  const rows = spouseRelationships(personId, relationships);
+  if (rows.length === 0) return null;
+  return (
+    <div>
+      <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+        {t('panel.spouses')}
+      </p>
+      <ul className="mt-1 space-y-0.5 text-sm">
+        {rows.map(({ relationship, partnerId }) => {
+          const partner = byId.get(partnerId);
+          const summary = marriageSummary(relationship);
+          return (
+            <li key={relationship.id}>
+              <button
+                type="button"
+                className="flex w-full items-baseline justify-between gap-2 rounded px-1 py-0.5 text-left hover:bg-accent"
+                onClick={() => onEditMarriage?.(relationship)}
+              >
+                <span className="truncate">{partner ? fullName(partner) : t('common.unknown')}</span>
+                {summary && <span className="shrink-0 text-xs text-muted-foreground">{summary}</span>}
+              </button>
+            </li>
+          );
+        })}
+      </ul>
+    </div>
+  );
+}
+
 function PanelBody({
   mode,
   person,
@@ -59,6 +112,7 @@ function PanelBody({
   onSubmit,
   onExplicitSave,
   onDelete,
+  onEditMarriage,
 }: Omit<PersonDetailPanelProps, 'open' | 'onClose'>) {
   const { t } = useTranslation();
   const byId = new Map(persons.map((p) => [p.id, p]));
@@ -77,7 +131,12 @@ function PanelBody({
         <div className="space-y-3 border-t pt-4">
           <RelativeList label={t('panel.parents')} ids={parentsOf(person.id, relationships)} byId={byId} />
           <RelativeList label={t('panel.children')} ids={childrenOf(person.id, relationships)} byId={byId} />
-          <RelativeList label={t('panel.spouses')} ids={spousesOf(person.id, relationships)} byId={byId} />
+          <SpouseList
+            personId={person.id}
+            relationships={relationships}
+            byId={byId}
+            onEditMarriage={onEditMarriage}
+          />
         </div>
       )}
     </div>

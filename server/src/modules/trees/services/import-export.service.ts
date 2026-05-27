@@ -43,6 +43,9 @@ export class ImportExportService {
         sourcePersonId: r.sourcePersonId,
         targetPersonId: r.targetPersonId,
         type: r.type,
+        marriageDate: r.marriageDate,
+        divorced: r.divorced,
+        divorceDate: r.divorceDate,
       })),
     };
   }
@@ -93,6 +96,9 @@ export class ImportExportService {
           sourcePersonId: idMap.get(r.sourcePersonId) as string,
           targetPersonId: idMap.get(r.targetPersonId) as string,
           type: r.type,
+          marriageDate: r.marriageDate ?? null,
+          divorced: r.divorced ?? false,
+          divorceDate: r.divorceDate ?? null,
         })),
       });
     }

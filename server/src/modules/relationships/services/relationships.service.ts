@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { Relationship, RelationshipType } from '@prisma/client';
 import { BusinessRuleException } from '../../../common/errors/business.exceptions';
 import { RelationshipsRepository } from '../repositories/relationships.repository';
-import { CreateRelationshipDto } from '../dto/relationship.dto';
+import { CreateRelationshipDto, UpdateRelationshipDto } from '../dto/relationship.dto';
 import { normalizeSpousePair, wouldCreateCycle } from '../relationship.rules';
 
 function samePair(
@@ -95,6 +95,22 @@ export class RelationshipsService {
     }
 
     return this.repo.create(treeId, { sourcePersonId, targetPersonId, type });
+  }
+
+  async update(id: string, dto: UpdateRelationshipDto): Promise<Relationship> {
+    const existing = await this.repo.findById(id);
+    if (!existing) throw new NotFoundException(`Relationship ${id} not found`);
+    if (existing.type !== RelationshipType.SPOUSE) {
+      throw new BusinessRuleException(
+        'NOT_A_SPOUSE_RELATIONSHIP',
+        'Only spouse relationships carry marriage or divorce details',
+      );
+    }
+    return this.repo.update(id, {
+      ...(dto.marriageDate !== undefined ? { marriageDate: dto.marriageDate } : {}),
+      ...(dto.divorced !== undefined ? { divorced: dto.divorced } : {}),
+      ...(dto.divorceDate !== undefined ? { divorceDate: dto.divorceDate } : {}),
+    });
   }
 
   async delete(id: string): Promise<void> {
