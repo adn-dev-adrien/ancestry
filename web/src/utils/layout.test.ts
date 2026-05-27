@@ -48,7 +48,9 @@ describe('buildGraph', () => {
     expect(edges).toHaveLength(2);
     const parentChild = edges.find((e) => e.id === 'r1');
     const spouse = edges.find((e) => e.id === 'r2');
+    expect(parentChild?.type).toBe('parentChild');
     expect(parentChild?.markerEnd).toBeDefined();
+    expect(spouse?.type).toBe('spouse');
     expect(spouse?.style?.strokeDasharray).toBe('6 4');
   });
 

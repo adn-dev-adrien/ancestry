@@ -13,8 +13,11 @@ import '@xyflow/react/dist/style.css';
 import type { Person, Relationship } from '@/services/types';
 import { buildGraph } from '@/utils/layout';
 import { PersonNode } from './PersonNode';
+import { ParentChildEdge } from './edges/ParentChildEdge';
+import { SpouseEdge } from './edges/SpouseEdge';
 
 const nodeTypes = { person: PersonNode };
+const edgeTypes = { parentChild: ParentChildEdge, spouse: SpouseEdge };
 
 interface TreeCanvasProps {
   persons: Person[];
@@ -64,6 +67,7 @@ export function TreeCanvas({
       nodes={nodes}
       edges={edges}
       nodeTypes={nodeTypes}
+      edgeTypes={edgeTypes}
       onNodesChange={onNodesChange}
       onEdgesChange={onEdgesChange}
       onNodeClick={(_event, node: Node) => onNodeClick(node.id)}

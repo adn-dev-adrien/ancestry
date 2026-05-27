@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- Relationship edge icons: a small uniform badge at the middle of each link — a baby (blue) on
+  parent-child edges, a heart (rose) on spouse edges — making links self-explanatory.
 - Birth place autocomplete: the field suggests French communes live from geo.api.gouv.fr
   (no local list); picking one stores "Name (Department)". Manual free-text entry still works
   for renamed/missing/foreign places.
