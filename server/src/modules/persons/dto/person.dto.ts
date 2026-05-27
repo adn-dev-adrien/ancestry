@@ -3,7 +3,7 @@ import { z } from 'zod';
 
 const isoDate = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Expected date as YYYY-MM-DD');
 
-const personObject = z
+export const personFieldsSchema = z
   .object({
     givenName: z.string().trim().min(1).max(100),
     familyName: z.string().max(100).nullable().optional(),
@@ -26,11 +26,11 @@ const livingRule = {
   path: ['deathDate'],
 };
 
-export const createPersonSchema = personObject.refine(
+export const createPersonSchema = personFieldsSchema.refine(
   (d) => !(d.living === true && d.deathDate),
   livingRule,
 );
-export const updatePersonSchema = personObject
+export const updatePersonSchema = personFieldsSchema
   .partial()
   .refine((d) => !(d.living === true && d.deathDate), livingRule);
 

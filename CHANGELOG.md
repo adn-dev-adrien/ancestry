@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- JSON import/export (Phase 2): export a tree to a versioned JSON file; import a file as a new tree
+  or to replace an existing tree. Import is atomic and re-maps person ids. Validated server-side.
 - Internationalization (FR/EN) with a flag language switcher; French by default, choice persisted
   in localStorage. All UI strings, validation messages, and server error codes are localized.
 - Person extra fields: birth name, "living" flag (locks the death date; server rejects a living
