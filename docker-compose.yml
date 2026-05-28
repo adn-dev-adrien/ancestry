@@ -41,6 +41,7 @@ services:
       dockerfile: Dockerfile
       args:
         VITE_API_URL: ${VITE_API_URL:-/api}
+        VITE_COMMIT_SHA: ${VITE_COMMIT_SHA:-}
     container_name: ancestry-web
     restart: unless-stopped
     depends_on:
