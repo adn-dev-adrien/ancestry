@@ -33,9 +33,10 @@ address baked at build time, no CORS).
 
 ## Deploy
 
-- Publish a **Release** (GitHub → Releases → Draft a new release → choose/create a tag → Publish).
-  The workflow runs on the Pi and updates the stack. You can also trigger it manually from the
-  **Actions** tab (**Run workflow**).
+The deploy runs on the Pi when any of these happen:
+- **Push to the `release` branch** (e.g. `git push origin master:release` or merge into `release`).
+- **Publish a GitHub Release** (Releases → Draft a new release → choose/create a tag → Publish).
+- **Manual run** from the **Actions** tab (**Run workflow**).
 
 What the workflow does (all on the Pi):
 1. `docker compose --profile prod build` — builds the web and API images (ARM-native).

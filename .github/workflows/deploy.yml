@@ -1,8 +1,10 @@
 name: Deploy to Raspberry Pi
 
-# Publishing a GitHub Release deploys the current code to the self-hosted Pi runner.
-# A manual run is also available from the Actions tab.
+# Deploys the current code to the self-hosted Pi runner when you push to the `release` branch
+# or publish a GitHub Release. A manual run is also available from the Actions tab.
 on:
+  push:
+    branches: [release]
   release:
     types: [published]
   workflow_dispatch:
