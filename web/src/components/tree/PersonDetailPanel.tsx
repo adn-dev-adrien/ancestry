@@ -169,11 +169,13 @@ export function PersonDetailPanel(props: PersonDetailPanelProps) {
   if (isDesktop) {
     return (
       <Sheet open={open} onOpenChange={(next) => !next && onClose()}>
-        <SheetContent side="right" className="w-full overflow-y-auto sm:max-w-md">
+        <SheetContent side="right" className="w-full sm:max-w-md">
           <SheetHeader>
             <SheetTitle>{title}</SheetTitle>
           </SheetHeader>
-          <PanelBody {...props} />
+          <div className="min-h-0 flex-1 overflow-y-auto">
+            <PanelBody {...props} />
+          </div>
         </SheetContent>
       </Sheet>
     );
@@ -181,11 +183,13 @@ export function PersonDetailPanel(props: PersonDetailPanelProps) {
 
   return (
     <Drawer open={open} onOpenChange={(next) => !next && onClose()}>
-      <DrawerContent className="max-h-[90vh] overflow-y-auto">
+      <DrawerContent className="max-h-[90vh]">
         <DrawerHeader>
           <DrawerTitle>{title}</DrawerTitle>
         </DrawerHeader>
-        <PanelBody {...props} />
+        <div className="min-h-0 flex-1 overflow-y-auto">
+          <PanelBody {...props} />
+        </div>
       </DrawerContent>
     </Drawer>
   );

@@ -99,9 +99,9 @@ export function HomePage() {
 
   return (
     <div className="mx-auto flex min-h-dvh w-full max-w-4xl flex-col px-4 py-6 md:px-6">
-      <header className="flex items-center justify-between">
+      <header className="flex flex-wrap items-center justify-between gap-3">
         <h1 className="text-xl font-semibold tracking-tight">Ancestry</h1>
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center justify-end gap-2">
           <LanguageSwitcher />
           <input
             ref={fileInputRef}

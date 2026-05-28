@@ -259,7 +259,7 @@ export function PersonForm({
         <Input id="familyName" {...register('familyName')} autoComplete="off" />
       </div>
 
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <div className="grid gap-1.5">
           <Label htmlFor="birthDate">{t('form.birthDate')}</Label>
           <Input id="birthDate" type="date" {...register('birthDate')} />
