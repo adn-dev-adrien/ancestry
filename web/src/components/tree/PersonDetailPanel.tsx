@@ -42,10 +42,12 @@ function RelativeList({
   label,
   ids,
   byId,
+  showBirthDate = false,
 }: {
   label: string;
   ids: string[];
   byId: Map<string, Person>;
+  showBirthDate?: boolean;
 }) {
   const { t } = useTranslation();
   if (ids.length === 0) return null;
@@ -55,7 +57,17 @@ function RelativeList({
       <ul className="mt-1 space-y-0.5 text-sm">
         {ids.map((id) => {
           const relative = byId.get(id);
-          return <li key={id}>{relative ? fullName(relative) : t('common.unknown')}</li>;
+          if (!relative) return <li key={id}>{t('common.unknown')}</li>;
+          return (
+            <li key={id} className="flex items-baseline justify-between gap-2">
+              <span className="truncate">{fullName(relative)}</span>
+              {showBirthDate && relative.birthDate && (
+                <span className="shrink-0 text-xs text-muted-foreground">
+                  ★ {relative.birthDate}
+                </span>
+              )}
+            </li>
+          );
         })}
       </ul>
     </div>
@@ -130,7 +142,12 @@ function PanelBody({
       {mode === 'edit' && person && (
         <div className="space-y-3 border-t pt-4">
           <RelativeList label={t('panel.parents')} ids={parentsOf(person.id, relationships)} byId={byId} />
-          <RelativeList label={t('panel.children')} ids={childrenOf(person.id, relationships)} byId={byId} />
+          <RelativeList
+            label={t('panel.children')}
+            ids={childrenOf(person.id, relationships)}
+            byId={byId}
+            showBirthDate
+          />
           <SpouseList
             personId={person.id}
             relationships={relationships}

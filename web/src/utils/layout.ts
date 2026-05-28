@@ -1,6 +1,7 @@
 import dagre from 'dagre';
 import { MarkerType, type Edge, type Node } from '@xyflow/react';
 import type { Person, Relationship } from '@/services/types';
+import type { UnionPositions } from './unionPositions';
 
 export const NODE_WIDTH = 176;
 export const NODE_HEIGHT = 76;
@@ -50,6 +51,7 @@ const unionId = (key: string) => `union-${key}`;
 export function buildGraph(
   persons: Person[],
   relationships: Relationship[],
+  unionPositions: UnionPositions = {},
 ): { nodes: Node[]; edges: Edge[] } {
   const families = buildFamilies(relationships);
 
@@ -76,14 +78,19 @@ export function buildGraph(
   });
 
   const unionNodes: Node[] = families.map((fam) => {
-    const laid = graph.node(unionId(fam.key));
+    const uid = unionId(fam.key);
+    const laid = graph.node(uid);
+    // A manual (dragged) position wins; otherwise center the box on the dagre point.
+    const position = unionPositions[uid] ?? {
+      x: (laid?.x ?? 0) - UNION_SIZE / 2,
+      y: (laid?.y ?? 0) - UNION_SIZE / 2,
+    };
     return {
-      id: unionId(fam.key),
+      id: uid,
       type: 'union',
-      // Center the (real-sized) junction box on the dagre point.
-      position: { x: (laid?.x ?? 0) - UNION_SIZE / 2, y: (laid?.y ?? 0) - UNION_SIZE / 2 },
+      position,
       data: {},
-      draggable: false,
+      draggable: true,
       selectable: false,
     };
   });

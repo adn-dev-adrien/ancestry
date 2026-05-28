@@ -67,9 +67,18 @@ describe('buildGraph', () => {
     expect(edges.some((e) => e.type === 'parentChild' && e.source === 'A' && e.target === 'C')).toBe(
       false,
     );
-    // Union nodes are not interactive.
+    // Junctions are draggable (to reposition the bus) but not selectable (no panel).
     expect(unions[0].selectable).toBe(false);
-    expect(unions[0].draggable).toBe(false);
+    expect(unions[0].draggable).toBe(true);
+  });
+
+  it('uses a saved manual position for a union when provided', () => {
+    const persons = [person('A'), person('B')];
+    const rels = [rel('r1', 'A', 'B', 'PARENT_CHILD')];
+    const unionIdValue = buildGraph(persons, rels).nodes.find((n) => n.type === 'union')!.id;
+    const { nodes } = buildGraph(persons, rels, { [unionIdValue]: { x: 999, y: 42 } });
+    const union = nodes.find((n) => n.type === 'union');
+    expect(union?.position).toEqual({ x: 999, y: 42 });
   });
 
   it('still creates a union for a single parent', () => {

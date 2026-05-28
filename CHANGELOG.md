@@ -8,13 +8,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Fixed
+- Parent-child links not rendering: the family junction had no size, so its handles (and the
+  connecting edges) didn't render — children appeared unlinked. The junction now keeps a real size.
+- Selected/connecting person nodes no longer render blurry (removed the CSS scale on selection).
+
+### Fixed
+- Parent-child links not rendering: the family junction had no size, so its handles (and the
+  connecting edges) didn't render — children appeared unlinked. The junction now keeps a real size.
+- Selected/connecting person nodes no longer render blurry (removed the CSS scale on selection).
+
+### Fixed
 - Deployment: install OpenSSL in the server image and declare the `linux-musl-arm64-openssl-3.0.x`
   Prisma engine, so `prisma migrate deploy` works on the Alpine/ARM64 Raspberry Pi.
 
 ### Changed
 - Parent-child links use a "family bus": a couple's children share one junction with a single
   branching connector instead of many crossing diagonals; the baby icon now appears once on the
-  family junction instead of on every link.
+  family junction instead of on every link. The junction is **draggable** (position saved per tree
+  in localStorage) so the bus can be repositioned.
+- The person detail panel lists each child with their birth date.
 - Zoom-adaptive node detail: zoomed out shows only the name, a bit closer adds the photo, and
   closer still shows all fields — keeping content legible. Node size stays constant. The name font
   is counter-scaled when zoomed out so names stay readable at low zoom.

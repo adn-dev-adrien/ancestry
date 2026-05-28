@@ -33,10 +33,11 @@ function PersonNodeComponent({ data, selected }: NodeProps<PersonNodeType>) {
   return (
     <div
       className={cn(
-        'flex select-none items-center gap-2 rounded-lg border px-3 py-2 shadow-sm transition-transform',
+        'flex select-none items-center gap-2 rounded-lg border px-3 py-2 shadow-sm',
         level === 'compact' && 'justify-center',
         tint,
-        selected && 'border-primary ring-2 ring-primary scale-[1.03]',
+        // No CSS scale here: scaling the node makes its text render blurry.
+        selected && 'border-primary ring-2 ring-primary',
       )}
       style={{ width: NODE_WIDTH, minHeight: NODE_HEIGHT }}
     >

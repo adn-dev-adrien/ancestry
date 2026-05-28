@@ -22,9 +22,12 @@ no baby badges. Spouse (marriage) links are unchanged.
   exactly that parent set (derived from the stored `PARENT_CHILD` relationships).
 - For each family, layout introduces a tiny invisible **union node** placed between the parents'
   generation and the children's generation. Edges become: each parent → union, and union → each child.
-- The union node is decorative: not selectable, not draggable, ignored by node clicks, never persisted.
-- Parent→union and union→child edges are drawn as light orthogonal (elbow) lines. **No baby badge.**
-  A small arrowhead marks the child end only; parent→union has none. Lines are thin/muted.
+- The union node shows one **baby badge** for the whole family (on the junction) and is not
+  selectable / ignored by node clicks. It **is draggable**, so the user can reposition the junction
+  (and thus the bus); a dragged junction's position is **persisted per tree in localStorage**
+  (unions are not DB entities) and reused on the next layout.
+- Parent→union and union→child edges are drawn as light orthogonal (elbow) lines. **No baby badge on
+  the lines** (the badge sits on the junction). A small arrowhead marks the child end only.
 - Spouse links keep today's behavior (horizontal, heart badge, marriage year, divorced styling).
 - Stored relationships, export/import, and all CRUD are unchanged — this is purely how the
   parent-child graph is laid out and rendered.
