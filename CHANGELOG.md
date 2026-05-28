@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- Deployment: install OpenSSL in the server image and declare the `linux-musl-arm64-openssl-3.0.x`
+  Prisma engine, so `prisma migrate deploy` works on the Alpine/ARM64 Raspberry Pi.
+
 ### Changed
 - Parent-child links use a "family bus": a couple's children share one junction with a single
   branching connector instead of many crossing diagonals; the baby icon now appears once on the
