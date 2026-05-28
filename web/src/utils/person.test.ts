@@ -1,11 +1,12 @@
 import { describe, expect, it } from 'vitest';
 import type { Person } from '@/services/types';
-import { fullName } from './person';
+import { allGivenNames, fullName, searchLabel } from './person';
 
 const person = (over: Partial<Person> = {}): Person => ({
   id: 'p1',
   treeId: 't',
   givenName: 'Ada',
+  additionalGivenNames: null,
   familyName: null,
   birthName: null,
   birthDate: null,
@@ -40,5 +41,25 @@ describe('fullName', () => {
 
   it('is just the given name when no family or birth name', () => {
     expect(fullName(person())).toBe('Ada');
+  });
+
+  it('ignores additional given names (node display unchanged)', () => {
+    expect(fullName(person({ additionalGivenNames: 'Jeanne', familyName: 'Lovelace' }))).toBe(
+      'Ada Lovelace',
+    );
+  });
+});
+
+describe('allGivenNames / searchLabel', () => {
+  it('allGivenNames combines primary and additional first names', () => {
+    expect(allGivenNames(person({ additionalGivenNames: 'Jeanne Joséphine' }))).toBe(
+      'Ada Jeanne Joséphine',
+    );
+  });
+
+  it('searchLabel includes all first names and the family part', () => {
+    expect(
+      searchLabel(person({ additionalGivenNames: 'Jeanne', familyName: 'Lovelace' })),
+    ).toBe('Ada Jeanne Lovelace');
   });
 });

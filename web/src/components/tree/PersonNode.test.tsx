@@ -21,6 +21,7 @@ const person = (over: Partial<Person> = {}): Person => ({
   id: 'p1',
   treeId: 't',
   givenName: 'Ada',
+  additionalGivenNames: null,
   familyName: 'Lovelace',
   birthName: null,
   birthDate: '1815-12-10',

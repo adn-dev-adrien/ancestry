@@ -55,6 +55,7 @@ describe('PersonsService', () => {
     repo.create.mockResolvedValue({ id: 'p1' } as never);
     await service.create('t1', {
       givenName: 'Ada',
+      additionalGivenNames: 'Jeanne Joséphine',
       birthName: 'Byron',
       living: true,
       birthPlace: 'London',
@@ -64,6 +65,7 @@ describe('PersonsService', () => {
     expect(repo.create).toHaveBeenCalledWith(
       't1',
       expect.objectContaining({
+        additionalGivenNames: 'Jeanne Joséphine',
         birthName: 'Byron',
         living: true,
         birthPlace: 'London',

@@ -13,6 +13,7 @@ const person = (id: string, givenName: string, familyName: string | null = null)
   id,
   treeId: 't',
   givenName,
+  additionalGivenNames: null,
   familyName,
   birthName: null,
   birthDate: null,

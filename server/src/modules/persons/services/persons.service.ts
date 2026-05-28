@@ -24,6 +24,7 @@ export class PersonsService {
     assertDateOrder(dto.birthDate, dto.deathDate);
     return this.repo.create(treeId, {
       givenName: dto.givenName,
+      additionalGivenNames: dto.additionalGivenNames ?? null,
       familyName: dto.familyName ?? null,
       birthName: dto.birthName ?? null,
       birthDate: dto.birthDate ?? null,
@@ -49,6 +50,9 @@ export class PersonsService {
 
     return this.repo.update(id, {
       ...(dto.givenName !== undefined ? { givenName: dto.givenName } : {}),
+      ...(dto.additionalGivenNames !== undefined
+        ? { additionalGivenNames: dto.additionalGivenNames }
+        : {}),
       ...(dto.familyName !== undefined ? { familyName: dto.familyName } : {}),
       ...(dto.birthName !== undefined ? { birthName: dto.birthName } : {}),
       ...(dto.birthDate !== undefined ? { birthDate: dto.birthDate } : {}),

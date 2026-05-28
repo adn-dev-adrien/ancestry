@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Additional first names: a person can store extra first names (free text) in their form. They are
+  not shown on the graph node, but search matches them and shows all first names in the results.
+
 ### Fixed
 - Parent-child links not rendering: the family junction had no size, so its handles (and the
   connecting edges) didn't render — children appeared unlinked. The junction now keeps a real size.

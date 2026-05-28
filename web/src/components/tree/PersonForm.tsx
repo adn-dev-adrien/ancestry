@@ -26,6 +26,7 @@ import type { Person } from '@/services/types';
 
 interface PersonFormValues {
   givenName: string;
+  additionalGivenNames: string;
   birthName: string;
   familyName: string;
   birthDate: string;
@@ -47,6 +48,7 @@ function makeSchema(t: TFunction) {
   return z
     .object({
       givenName: z.string().trim().min(1, t('form.errGivenNameRequired')).max(100),
+      additionalGivenNames: z.string().max(200),
       birthName: z.string().max(100),
       familyName: z.string().max(100),
       birthDate: optionalDate,
@@ -71,6 +73,7 @@ function makeSchema(t: TFunction) {
 function toFormValues(person?: Person): PersonFormValues {
   return {
     givenName: person?.givenName ?? '',
+    additionalGivenNames: person?.additionalGivenNames ?? '',
     birthName: person?.birthName ?? '',
     familyName: person?.familyName ?? '',
     birthDate: person?.birthDate ?? '',
@@ -87,6 +90,7 @@ function toFormValues(person?: Person): PersonFormValues {
 function toInput(values: PersonFormValues): PersonInput {
   return {
     givenName: values.givenName.trim(),
+    additionalGivenNames: values.additionalGivenNames || null,
     birthName: values.birthName || null,
     familyName: values.familyName || null,
     birthDate: values.birthDate || null,
@@ -238,6 +242,11 @@ export function PersonForm({
         {errors.givenName && (
           <p className="text-xs text-destructive">{errors.givenName.message}</p>
         )}
+      </div>
+
+      <div className="grid gap-1.5">
+        <Label htmlFor="additionalGivenNames">{t('form.additionalGivenNames')}</Label>
+        <Input id="additionalGivenNames" {...register('additionalGivenNames')} autoComplete="off" />
       </div>
 
       <div className="grid gap-1.5">

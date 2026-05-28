@@ -26,6 +26,7 @@ export class ImportExportService {
       persons: tree.persons.map((p) => ({
         id: p.id,
         givenName: p.givenName,
+        additionalGivenNames: p.additionalGivenNames,
         familyName: p.familyName,
         birthName: p.birthName,
         birthDate: p.birthDate,
@@ -113,6 +114,7 @@ export class ImportExportService {
       id,
       treeId,
       givenName: p.givenName,
+      additionalGivenNames: p.additionalGivenNames ?? null,
       familyName: p.familyName ?? null,
       birthName: p.birthName ?? null,
       birthDate: p.birthDate ?? null,

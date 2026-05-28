@@ -51,6 +51,7 @@
   },
   "form": {
     "givenName": "Prénom",
+    "additionalGivenNames": "Autres prénoms",
     "birthName": "Nom de naissance",
     "familyName": "Nom de famille",
     "birthDate": "Date de naissance",

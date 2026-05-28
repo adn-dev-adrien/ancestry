@@ -26,6 +26,7 @@ const personWithPhoto: Person = {
   id: 'p1',
   treeId: 't',
   givenName: 'Ada',
+  additionalGivenNames: null,
   familyName: null,
   birthName: null,
   birthDate: null,

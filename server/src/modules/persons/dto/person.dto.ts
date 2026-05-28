@@ -6,6 +6,7 @@ const isoDate = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Expected date as YYYY-M
 export const personFieldsSchema = z
   .object({
     givenName: z.string().trim().min(1).max(100),
+    additionalGivenNames: z.string().max(200).nullable().optional(),
     familyName: z.string().max(100).nullable().optional(),
     birthName: z.string().max(100).nullable().optional(),
     birthDate: isoDate.nullable().optional(),

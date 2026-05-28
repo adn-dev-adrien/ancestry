@@ -14,6 +14,7 @@ export interface Person {
   id: string;
   treeId: string;
   givenName: string;
+  additionalGivenNames: string | null;
   familyName: string | null;
   birthName: string | null;
   birthDate: string | null;

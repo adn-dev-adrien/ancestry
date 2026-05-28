@@ -6,6 +6,7 @@ const person = (id: string, over: Partial<Person> = {}): Person => ({
   id,
   treeId: 't',
   givenName: id,
+  additionalGivenNames: null,
   familyName: null,
   birthName: null,
   birthDate: null,
