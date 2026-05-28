@@ -3,6 +3,7 @@ import type { Gender, Person } from './types';
 
 export interface PersonInput {
   givenName: string;
+  additionalGivenNames?: string | null;
   familyName?: string | null;
   birthName?: string | null;
   birthDate?: string | null;

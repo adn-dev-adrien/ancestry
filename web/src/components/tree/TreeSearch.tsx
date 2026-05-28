@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import type { Person } from '@/services/types';
-import { fullName, lifeSpan } from '@/utils/person';
+import { lifeSpan, searchLabel } from '@/utils/person';
 import { searchPersons } from '@/utils/search';
 
 interface TreeSearchProps {
@@ -80,7 +80,7 @@ export function TreeSearch({ persons, onSelect }: TreeSearchProps) {
                       handleSelect(person);
                     }}
                   >
-                    <span className="truncate">{fullName(person)}</span>
+                    <span className="truncate">{searchLabel(person)}</span>
                     {span && <span className="shrink-0 text-xs text-muted-foreground">{span}</span>}
                   </button>
                 </li>

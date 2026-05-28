@@ -51,6 +51,7 @@
   },
   "form": {
     "givenName": "Given name",
+    "additionalGivenNames": "Other first names",
     "birthName": "Birth name",
     "familyName": "Family name",
     "birthDate": "Birth date",

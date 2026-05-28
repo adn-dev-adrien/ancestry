@@ -37,6 +37,7 @@ model Person {
   treeId     String
   tree       Tree     @relation(fields: [treeId], references: [id], onDelete: Cascade)
   givenName           String
+  additionalGivenNames String?
   familyName          String?
   birthName           String?
   birthDate           String?

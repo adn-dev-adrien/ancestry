@@ -6,6 +6,7 @@ const person = (id: string, over: Partial<Person> = {}): Person => ({
   id,
   treeId: 't',
   givenName: id,
+  additionalGivenNames: null,
   familyName: null,
   birthName: null,
   birthDate: null,
@@ -50,6 +51,11 @@ describe('searchPersons', () => {
 
   it('matches on family name', () => {
     expect(searchPersons(people, 'lovelace').map((p) => p.id)).toEqual(['1']);
+  });
+
+  it('matches on an additional given name', () => {
+    const withExtra = [...people, person('5', { givenName: 'Bob', additionalGivenNames: 'Zorglub' })];
+    expect(searchPersons(withExtra, 'zorg').map((p) => p.id)).toContain('5');
   });
 
   it('ranks prefix matches before mid-string matches', () => {
