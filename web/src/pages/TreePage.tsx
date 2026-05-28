@@ -216,6 +216,7 @@ export function TreePage() {
         </div>
 
         <TreeCanvas
+          treeId={treeId}
           persons={persons}
           relationships={relationships}
           selectedId={panel?.mode === 'edit' ? panel.personId : null}

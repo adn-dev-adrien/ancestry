@@ -12,6 +12,7 @@ import {
 import '@xyflow/react/dist/style.css';
 import type { Person, Relationship } from '@/services/types';
 import { buildGraph } from '@/utils/layout';
+import { getUnionPositions, saveUnionPosition } from '@/utils/unionPositions';
 import { PersonNode } from './PersonNode';
 import { UnionNode } from './nodes/UnionNode';
 import { ParentChildEdge } from './edges/ParentChildEdge';
@@ -21,6 +22,7 @@ const nodeTypes = { person: PersonNode, union: UnionNode };
 const edgeTypes = { parentChild: ParentChildEdge, spouse: SpouseEdge };
 
 interface TreeCanvasProps {
+  treeId: string;
   persons: Person[];
   relationships: Relationship[];
   selectedId: string | null;
@@ -34,6 +36,7 @@ interface TreeCanvasProps {
 }
 
 export function TreeCanvas({
+  treeId,
   persons,
   relationships,
   selectedId,
@@ -48,12 +51,12 @@ export function TreeCanvas({
   const [nodes, setNodes, onNodesChange] = useNodesState<Node>([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([]);
 
-  // Rebuild layout whenever the underlying graph changes.
+  // Rebuild layout whenever the underlying graph changes (honoring saved junction positions).
   useEffect(() => {
-    const graph = buildGraph(persons, relationships);
+    const graph = buildGraph(persons, relationships, getUnionPositions(treeId));
     setNodes(graph.nodes);
     setEdges(graph.edges);
-  }, [persons, relationships, setNodes, setEdges]);
+  }, [persons, relationships, treeId, setNodes, setEdges]);
 
   // Reflect selection / connect-source / search-focus highlight without recomputing positions.
   useEffect(() => {
@@ -78,6 +81,7 @@ export function TreeCanvas({
       }}
       onNodeDragStop={(_event, node: Node) => {
         if (node.type === 'person') onPositionChange(node.id, node.position.x, node.position.y);
+        else if (node.type === 'union') saveUnionPosition(treeId, node.id, node.position);
       }}
       onEdgeClick={(_event, edge: Edge) => {
         if (edge.type === 'spouse') onSpouseEdgeClick(edge.id);
