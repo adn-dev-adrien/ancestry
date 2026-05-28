@@ -25,7 +25,12 @@ jobs:
           POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
           VITE_API_URL=/api
           CORS_ORIGIN=${{ vars.CORS_ORIGIN || 'http://localhost:8080' }}
+          WEB_PORT=${{ vars.WEB_PORT || '8080' }}
+          API_PORT=${{ vars.API_PORT || '3100' }}
           EOF
+
+      - name: Stop previous stack
+        run: docker compose --profile prod down --remove-orphans
 
       - name: Build images
         run: docker compose --profile prod build

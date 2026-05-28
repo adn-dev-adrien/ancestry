@@ -26,6 +26,10 @@ address baked at build time, no CORS).
    repository secret** → `POSTGRES_PASSWORD` = a strong password.
    (Optional repository **variable** `CORS_ORIGIN` if you later expose the app on a real host;
    not needed for same-origin access.)
+4. **Ports (if 8080/3100 are already used on the Pi)**: set repository **variables** `WEB_PORT`
+   (default `8080`) and/or `API_PORT` (default `3100`) to free ports. The app is then served at
+   `http://<pi-host>:<WEB_PORT>`. Each deploy also runs `docker compose down` first, so a previous
+   deploy's containers release their ports before the new one starts.
 
 ## Deploy
 
