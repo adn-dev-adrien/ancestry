@@ -1,7 +1,9 @@
 // Ancestry — Prisma schema.
 
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
+  // Include the Alpine/musl ARM64 engine (Raspberry Pi) alongside the local one.
+  binaryTargets = ["native", "linux-musl-arm64-openssl-3.0.x"]
 }
 
 datasource db {
