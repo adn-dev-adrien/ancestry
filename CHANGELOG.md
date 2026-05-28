@@ -17,6 +17,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Selected/connecting person nodes no longer render blurry (removed the CSS scale on selection).
 - Deployment: install OpenSSL in the server image and declare the `linux-musl-arm64-openssl-3.0.x`
   Prisma engine, so `prisma migrate deploy` works on the Alpine/ARM64 Raspberry Pi.
+- Mobile layout: the home header controls wrap instead of overflowing; the birth/death date fields
+  stack on narrow screens; the person detail panel scrolls so every field is reachable.
 
 ### Changed
 - Parent-child links use a "family bus": a couple's children share one junction with a single
