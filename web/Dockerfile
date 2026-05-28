@@ -3,6 +3,8 @@ WORKDIR /app
 # Same-origin API base by default: the web is served behind nginx which proxies /api.
 ARG VITE_API_URL=/api
 ENV VITE_API_URL=$VITE_API_URL
+ARG VITE_COMMIT_SHA=
+ENV VITE_COMMIT_SHA=$VITE_COMMIT_SHA
 COPY package.json package-lock.json* ./
 RUN npm ci
 COPY . .

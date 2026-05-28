@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Plus, TreePine, Upload } from 'lucide-react';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
+import { VersionBadge } from '@/components/VersionBadge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -160,6 +161,10 @@ export function HomePage() {
           </Card>
         )}
       </main>
+
+      <footer className="mt-6 text-center text-xs text-muted-foreground">
+        <VersionBadge />
+      </footer>
 
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent>

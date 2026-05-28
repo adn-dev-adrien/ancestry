@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- Build version badge: the home footer shows the commit SHA the front-end was built from
+  (baked at build time; `dev` when unknown). Deploy injects `github.sha`.
 - Additional first names: a person can store extra first names (free text) in their form. They are
   not shown on the graph node, but search matches them and shows all first names in the results.
 
