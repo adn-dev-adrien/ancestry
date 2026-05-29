@@ -14,6 +14,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   not shown on the graph node, but search matches them and shows all first names in the results.
 
 ### Fixed
+- Parent-child junction (baby badge) ending up far below the tree after creating a link: the
+  union is now centered between the **actual** parent and child positions instead of dagre's
+  default — so it sits between the two linked nodes even when persons have been moved manually.
 - Stale UI on iOS home-screen web apps: `index.html` is now served with `Cache-Control: no-cache`
   so clients always revalidate it and pick up the latest build (hashed assets stay cached 1y).
 - Parent-child links not rendering: the family junction had no size, so its handles (and the

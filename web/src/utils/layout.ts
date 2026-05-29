@@ -77,25 +77,48 @@ export function buildGraph(
     return { id: person.id, type: 'person', position: { x, y }, data: { person } };
   });
 
+  const posById = new Map(personNodes.map((n) => [n.id, n.position]));
+
   const unionNodes: Node[] = families.map((fam) => {
     const uid = unionId(fam.key);
-    const laid = graph.node(uid);
-    // A manual (dragged) position wins; otherwise center the box on the dagre point.
-    const position = unionPositions[uid] ?? {
-      x: (laid?.x ?? 0) - UNION_SIZE / 2,
-      y: (laid?.y ?? 0) - UNION_SIZE / 2,
-    };
+
+    // Center the junction between the actual (possibly stored) parent/child positions, so a
+    // newly created link sits between the two nodes — not where dagre would put it if persons
+    // had been manually moved. A saved manual junction position still wins.
+    const parents = fam.parents
+      .map((pid) => posById.get(pid))
+      .filter((p): p is { x: number; y: number } => Boolean(p));
+    const children = fam.children
+      .map((cid) => posById.get(cid))
+      .filter((p): p is { x: number; y: number } => Boolean(p));
+
+    let computed: { x: number; y: number };
+    if (parents.length > 0 && children.length > 0) {
+      const avgParentCenterX =
+        parents.reduce((s, p) => s + p.x + NODE_WIDTH / 2, 0) / parents.length;
+      const parentBottomY = Math.max(...parents.map((p) => p.y + NODE_HEIGHT));
+      const childTopY = Math.min(...children.map((p) => p.y));
+      computed = {
+        x: avgParentCenterX - UNION_SIZE / 2,
+        y: (parentBottomY + childTopY) / 2 - UNION_SIZE / 2,
+      };
+    } else {
+      const laid = graph.node(uid);
+      computed = {
+        x: (laid?.x ?? 0) - UNION_SIZE / 2,
+        y: (laid?.y ?? 0) - UNION_SIZE / 2,
+      };
+    }
+
     return {
       id: uid,
       type: 'union',
-      position,
+      position: unionPositions[uid] ?? computed,
       data: {},
       draggable: true,
       selectable: false,
     };
   });
-
-  const posById = new Map(personNodes.map((n) => [n.id, n.position]));
 
   const edges: Edge[] = [];
 

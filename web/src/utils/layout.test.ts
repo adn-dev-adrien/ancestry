@@ -98,6 +98,25 @@ describe('buildGraph', () => {
     expect(nodes.filter((n) => n.type === 'union')).toHaveLength(0);
   });
 
+  it('centers the union between actual parent and child positions', () => {
+    // NODE_WIDTH=176, NODE_HEIGHT=76, UNION_SIZE=20.
+    // Two parents side-by-side at the top, one child below in the middle.
+    const persons = [
+      person('A', { x: 0, y: 0 }),
+      person('B', { x: 400, y: 0 }),
+      person('C', { x: 200, y: 200 }),
+    ];
+    const { nodes } = buildGraph(persons, [
+      rel('r1', 'A', 'C', 'PARENT_CHILD'),
+      rel('r2', 'B', 'C', 'PARENT_CHILD'),
+    ]);
+    const union = nodes.find((n) => n.type === 'union')!;
+    // Centered horizontally between the parent centers (88 and 488 → avg 288), minus UNION_SIZE/2.
+    expect(union.position.x).toBe(278);
+    // Vertically midway between parents-bottom (76) and child-top (200), minus UNION_SIZE/2.
+    expect(union.position.y).toBe(128);
+  });
+
   it('keeps spouse links horizontal with their badge data', () => {
     const { edges } = buildGraph(
       [person('A'), person('B')],
