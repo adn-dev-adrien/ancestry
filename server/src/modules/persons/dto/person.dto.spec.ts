@@ -43,6 +43,34 @@ describe('createPersonSchema', () => {
     const huge = 'data:image/png;base64,' + 'A'.repeat(1_500_001);
     expect(createPersonSchema.safeParse({ givenName: 'Ada', photo: huge }).success).toBe(false);
   });
+
+  it('accepts deathPlace + deathPlaceUncertain', () => {
+    const result = createPersonSchema.safeParse({
+      givenName: 'Ada',
+      deathPlace: 'London',
+      deathPlaceUncertain: true,
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it('rejects a deathPlace over 200 chars', () => {
+    expect(
+      createPersonSchema.safeParse({ givenName: 'Ada', deathPlace: 'x'.repeat(201) }).success,
+    ).toBe(false);
+  });
+
+  it('normalizes name fields (lowercase + capitalize after separators)', () => {
+    const parsed = createPersonSchema.parse({
+      givenName: 'JEAN-PAUL',
+      additionalGivenNames: 'marie joséphine',
+      familyName: "d'arc",
+      birthName: 'DURAND',
+    });
+    expect(parsed.givenName).toBe('Jean-Paul');
+    expect(parsed.additionalGivenNames).toBe('Marie Joséphine');
+    expect(parsed.familyName).toBe("D'Arc");
+    expect(parsed.birthName).toBe('Durand');
+  });
 });
 
 describe('updatePersonSchema', () => {

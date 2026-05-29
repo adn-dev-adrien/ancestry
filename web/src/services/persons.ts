@@ -11,6 +11,8 @@ export interface PersonInput {
   living?: boolean;
   birthPlace?: string | null;
   birthPlaceUncertain?: boolean;
+  deathPlace?: string | null;
+  deathPlaceUncertain?: boolean;
   photo?: string | null;
   gender?: Gender | null;
   notes?: string | null;

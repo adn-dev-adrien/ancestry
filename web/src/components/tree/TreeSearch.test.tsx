@@ -21,6 +21,8 @@ const person = (id: string, givenName: string, familyName: string | null = null)
   living: false,
   birthPlace: null,
   birthPlaceUncertain: false,
+  deathPlace: null,
+  deathPlaceUncertain: false,
   photo: null,
   gender: null,
   notes: null,

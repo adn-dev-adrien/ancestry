@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- Death place on persons: optional free-text field with an "uncertain" flag, editable in the form
+  and included in JSON export/import. Not shown on the graph node (kept minimal).
 - Build version badge: the home footer shows the commit SHA the front-end was built from
   (baked at build time; `dev` when unknown). Deploy injects `github.sha`.
 - Additional first names: a person can store extra first names (free text) in their form. They are
@@ -25,6 +27,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   stack on narrow screens; the person detail panel scrolls so every field is reachable.
 
 ### Changed
+- Person form polish: single-column layout in a clearer flow (names → birth date → birth place →
+  En vie → death date → death place); ticking "En vie" hides the death date and death place fields
+  (and clears their values). The primary action ("Ajouter"/"Enregistrer", plus "Supprimer") moves
+  to a sticky banner at the top of the panel, staying visible while scrolling.
+- Name normalization: given/additional/family/birth names are stored proper-cased (first letter
+  capitalized after every space, hyphen or apostrophe) regardless of how the user types them
+  (e.g. `DURAND` → `Durand`, `JEAN-PAUL` → `Jean-Paul`, `d'arc` → `D'Arc`). Applied server-side
+  on every entry path (form, import).
 - Parent-child links use a "family bus": a couple's children share one junction with a single
   branching connector instead of many crossing diagonals; the baby icon now appears once on the
   family junction instead of on every link. The junction is **draggable** (position saved per tree

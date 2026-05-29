@@ -34,6 +34,8 @@ interface PersonFormValues {
   living: boolean;
   birthPlace: string;
   birthPlaceUncertain: boolean;
+  deathPlace: string;
+  deathPlaceUncertain: boolean;
   photo: string;
   gender: '' | 'MALE' | 'FEMALE' | 'OTHER';
   notes: string;
@@ -56,6 +58,8 @@ function makeSchema(t: TFunction) {
       living: z.boolean(),
       birthPlace: z.string().max(200),
       birthPlaceUncertain: z.boolean(),
+      deathPlace: z.string().max(200),
+      deathPlaceUncertain: z.boolean(),
       photo: z.string(),
       gender: z.enum(['', 'MALE', 'FEMALE', 'OTHER']),
       notes: z.string().max(2000),
@@ -81,6 +85,8 @@ function toFormValues(person?: Person): PersonFormValues {
     living: person?.living ?? false,
     birthPlace: person?.birthPlace ?? '',
     birthPlaceUncertain: person?.birthPlaceUncertain ?? false,
+    deathPlace: person?.deathPlace ?? '',
+    deathPlaceUncertain: person?.deathPlaceUncertain ?? false,
     photo: person?.photo ?? '',
     gender: person?.gender ?? '',
     notes: person?.notes ?? '',
@@ -98,6 +104,8 @@ function toInput(values: PersonFormValues): PersonInput {
     living: values.living,
     birthPlace: values.birthPlace || null,
     birthPlaceUncertain: values.birthPlaceUncertain,
+    deathPlace: values.deathPlace || null,
+    deathPlaceUncertain: values.deathPlaceUncertain,
     photo: values.photo || null,
     gender: values.gender || null,
     notes: values.notes || null,
@@ -156,6 +164,8 @@ export function PersonForm({
   const living = watch('living');
   const birthPlaceUncertain = watch('birthPlaceUncertain');
   const birthPlace = watch('birthPlace');
+  const deathPlaceUncertain = watch('deathPlaceUncertain');
+  const deathPlace = watch('deathPlace');
   const photo = watch('photo');
   const photoInputRef = useRef<HTMLInputElement>(null);
   const [dragging, setDragging] = useState(false);
@@ -180,7 +190,12 @@ export function PersonForm({
 
   const setLiving = (checked: boolean) => {
     setValue('living', checked, { shouldDirty: true, shouldValidate: true });
-    if (checked) setValue('deathDate', '', { shouldDirty: true, shouldValidate: true });
+    if (checked) {
+      // Death date and death place disappear from the UI; clear them so we don't ship stale data.
+      setValue('deathDate', '', { shouldDirty: true, shouldValidate: true });
+      setValue('deathPlace', '', { shouldDirty: true, shouldValidate: true });
+      setValue('deathPlaceUncertain', false, { shouldDirty: true, shouldValidate: true });
+    }
   };
 
   return (
@@ -191,6 +206,20 @@ export function PersonForm({
         onExplicitSave?.();
       })}
     >
+      {/* Sticky action bar: stays visible while the user scrolls through the form. */}
+      <div className="sticky top-0 z-10 -mx-4 flex items-center justify-between gap-2 border-b bg-background px-4 py-2">
+        {onDelete ? (
+          <Button type="button" variant="destructive" size="sm" onClick={onDelete}>
+            <Trash2 className="size-4" /> {t('form.delete')}
+          </Button>
+        ) : (
+          <span />
+        )}
+        <Button type="submit" size="sm" disabled={!isValid || isSaving}>
+          {mode === 'create' ? t('form.addPerson') : t('form.save')}
+        </Button>
+      </div>
+
       <div
         className={cn(
           'flex items-center gap-3 rounded-md border border-dashed p-3 transition-colors',
@@ -250,38 +279,19 @@ export function PersonForm({
       </div>
 
       <div className="grid gap-1.5">
+        <Label htmlFor="familyName">{t('form.familyName')}</Label>
+        <Input id="familyName" {...register('familyName')} autoComplete="off" />
+      </div>
+
+      <div className="grid gap-1.5">
         <Label htmlFor="birthName">{t('form.birthName')}</Label>
         <Input id="birthName" {...register('birthName')} autoComplete="off" />
       </div>
 
       <div className="grid gap-1.5">
-        <Label htmlFor="familyName">{t('form.familyName')}</Label>
-        <Input id="familyName" {...register('familyName')} autoComplete="off" />
+        <Label htmlFor="birthDate">{t('form.birthDate')}</Label>
+        <Input id="birthDate" type="date" {...register('birthDate')} />
       </div>
-
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-        <div className="grid gap-1.5">
-          <Label htmlFor="birthDate">{t('form.birthDate')}</Label>
-          <Input id="birthDate" type="date" {...register('birthDate')} />
-        </div>
-        <div className="grid gap-1.5">
-          <Label htmlFor="deathDate">{t('form.deathDate')}</Label>
-          <Input id="deathDate" type="date" disabled={living} {...register('deathDate')} />
-          {errors.deathDate && (
-            <p className="text-xs text-destructive">{errors.deathDate.message}</p>
-          )}
-        </div>
-      </div>
-
-      <label className="flex items-center gap-2 text-sm">
-        <Checkbox
-          id="living"
-          aria-label={t('form.living')}
-          checked={living}
-          onCheckedChange={(checked) => setLiving(checked === true)}
-        />
-        {t('form.living')}
-      </label>
 
       <div className="grid gap-1.5">
         <Label htmlFor="birthPlace">{t('form.birthPlace')}</Label>
@@ -306,6 +316,54 @@ export function PersonForm({
           {t('form.uncertain')}
         </label>
       </div>
+
+      <label className="flex items-center gap-2 text-sm">
+        <Checkbox
+          id="living"
+          aria-label={t('form.living')}
+          checked={living}
+          onCheckedChange={(checked) => setLiving(checked === true)}
+        />
+        {t('form.living')}
+      </label>
+
+      {!living && (
+        <>
+          <div className="grid gap-1.5">
+            <Label htmlFor="deathDate">{t('form.deathDate')}</Label>
+            <Input id="deathDate" type="date" {...register('deathDate')} />
+            {errors.deathDate && (
+              <p className="text-xs text-destructive">{errors.deathDate.message}</p>
+            )}
+          </div>
+
+          <div className="grid gap-1.5">
+            <Label htmlFor="deathPlace">{t('form.deathPlace')}</Label>
+            <CommuneInput
+              id="deathPlace"
+              value={deathPlace}
+              placeholder={t('form.deathPlace')}
+              onChange={(v) =>
+                setValue('deathPlace', v, { shouldDirty: true, shouldValidate: true })
+              }
+            />
+            <label className="flex items-center gap-2 text-sm text-muted-foreground">
+              <Checkbox
+                id="deathPlaceUncertain"
+                aria-label={t('form.uncertain')}
+                checked={deathPlaceUncertain}
+                onCheckedChange={(checked) =>
+                  setValue('deathPlaceUncertain', checked === true, {
+                    shouldDirty: true,
+                    shouldValidate: true,
+                  })
+                }
+              />
+              {t('form.uncertain')}
+            </label>
+          </div>
+        </>
+      )}
 
       <div className="grid gap-1.5">
         <Label htmlFor="gender">{t('form.gender')}</Label>
@@ -334,19 +392,6 @@ export function PersonForm({
       <div className="grid gap-1.5">
         <Label htmlFor="notes">{t('form.notes')}</Label>
         <Textarea id="notes" rows={3} {...register('notes')} />
-      </div>
-
-      <div className="flex items-center justify-between gap-2 pt-1">
-        {onDelete ? (
-          <Button type="button" variant="destructive" size="sm" onClick={onDelete}>
-            <Trash2 className="size-4" /> {t('form.delete')}
-          </Button>
-        ) : (
-          <span />
-        )}
-        <Button type="submit" size="sm" disabled={!isValid || isSaving}>
-          {mode === 'create' ? t('form.addPerson') : t('form.save')}
-        </Button>
       </div>
     </form>
   );
