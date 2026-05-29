@@ -58,6 +58,7 @@
     "deathDate": "Date de décès",
     "living": "En vie (pas de date de décès)",
     "birthPlace": "Lieu de naissance",
+    "deathPlace": "Lieu de décès",
     "uncertain": "Incertain",
     "gender": "Genre",
     "genderPlaceholder": "Non précisé",

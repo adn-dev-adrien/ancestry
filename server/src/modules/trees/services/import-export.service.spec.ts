@@ -43,8 +43,8 @@ describe('ImportExportService', () => {
       title: 'My family',
       description: null,
       persons: [
-        { id: 'p1', givenName: 'Ada', familyName: null, birthName: null, birthDate: null, deathDate: null, living: false, birthPlace: null, birthPlaceUncertain: false, photo: 'data:image/jpeg;base64,abc', gender: null, notes: null, x: null, y: null },
-        { id: 'p2', givenName: 'Bob', familyName: null, birthName: null, birthDate: null, deathDate: null, living: false, birthPlace: null, birthPlaceUncertain: false, photo: null, gender: null, notes: null, x: null, y: null },
+        { id: 'p1', givenName: 'Ada', familyName: null, birthName: null, birthDate: null, deathDate: null, living: false, birthPlace: null, birthPlaceUncertain: false, deathPlace: 'London', deathPlaceUncertain: true, photo: 'data:image/jpeg;base64,abc', gender: null, notes: null, x: null, y: null },
+        { id: 'p2', givenName: 'Bob', familyName: null, birthName: null, birthDate: null, deathDate: null, living: false, birthPlace: null, birthPlaceUncertain: false, deathPlace: null, deathPlaceUncertain: false, photo: null, gender: null, notes: null, x: null, y: null },
       ],
       relationships: [{ sourcePersonId: 'p1', targetPersonId: 'p2', type: 'PARENT_CHILD' }],
     });
@@ -54,6 +54,8 @@ describe('ImportExportService', () => {
     expect(result.version).toBe(1);
     expect(result.persons).toHaveLength(2);
     expect(result.persons[0].photo).toBe('data:image/jpeg;base64,abc');
+    expect(result.persons[0].deathPlace).toBe('London');
+    expect(result.persons[0].deathPlaceUncertain).toBe(true);
     expect(result.relationships[0].sourcePersonId).toBe('p1');
   });
 

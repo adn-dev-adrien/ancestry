@@ -1,19 +1,38 @@
 import { Gender } from '@prisma/client';
 import { z } from 'zod';
+import { normalizeName } from './name-normalize';
 
 const isoDate = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Expected date as YYYY-MM-DD');
 
+// Name fields are stored normalized (proper-case after every word break) regardless of how the
+// user typed them — the rule applies to every entry path (form, import) thanks to the transform.
+const requiredName = z.string().trim().min(1).max(100).transform(normalizeName);
+const optionalName = z
+  .string()
+  .max(100)
+  .nullable()
+  .optional()
+  .transform((v) => normalizeName(v));
+const optionalLongName = z
+  .string()
+  .max(200)
+  .nullable()
+  .optional()
+  .transform((v) => normalizeName(v));
+
 export const personFieldsSchema = z
   .object({
-    givenName: z.string().trim().min(1).max(100),
-    additionalGivenNames: z.string().max(200).nullable().optional(),
-    familyName: z.string().max(100).nullable().optional(),
-    birthName: z.string().max(100).nullable().optional(),
+    givenName: requiredName,
+    additionalGivenNames: optionalLongName,
+    familyName: optionalName,
+    birthName: optionalName,
     birthDate: isoDate.nullable().optional(),
     deathDate: isoDate.nullable().optional(),
     living: z.boolean().optional(),
     birthPlace: z.string().max(200).nullable().optional(),
     birthPlaceUncertain: z.boolean().optional(),
+    deathPlace: z.string().max(200).nullable().optional(),
+    deathPlaceUncertain: z.boolean().optional(),
     photo: z
       .string()
       .regex(/^data:image\/(jpeg|png|webp);base64,/, 'Expected an image data URL')

@@ -34,6 +34,8 @@ const personWithPhoto: Person = {
   living: false,
   birthPlace: null,
   birthPlaceUncertain: false,
+  deathPlace: null,
+  deathPlaceUncertain: false,
   photo: 'data:image/jpeg;base64,abc',
   gender: null,
   notes: null,
@@ -63,16 +65,20 @@ describe('PersonForm validation', () => {
     ).toBeInTheDocument();
   });
 
-  it('disables and clears the death date when marked living', async () => {
+  it('hides death date and death place when marked living (and clears their values)', async () => {
     renderForm(<PersonForm mode="create" onSubmit={vi.fn()} />);
-    const death = screen.getByLabelText('Date de décès') as HTMLInputElement;
-    fireEvent.change(death, { target: { value: '1990-01-01' } });
-    expect(death.value).toBe('1990-01-01');
+    fireEvent.change(screen.getByLabelText('Date de décès'), { target: { value: '1990-01-01' } });
+    fireEvent.change(screen.getByLabelText('Lieu de décès'), { target: { value: 'Paris' } });
 
     fireEvent.click(screen.getByRole('checkbox', { name: 'En vie (pas de date de décès)' }));
 
-    expect(death).toBeDisabled();
-    expect(death.value).toBe('');
+    expect(screen.queryByLabelText('Date de décès')).toBeNull();
+    expect(screen.queryByLabelText('Lieu de décès')).toBeNull();
+
+    // Unticking restores empty fields (no stored value recovered).
+    fireEvent.click(screen.getByRole('checkbox', { name: 'En vie (pas de date de décès)' }));
+    expect((screen.getByLabelText('Date de décès') as HTMLInputElement).value).toBe('');
+    expect((screen.getByLabelText('Lieu de décès') as HTMLInputElement).value).toBe('');
   });
 
   it('submits birth name and birth place', async () => {

@@ -58,6 +58,7 @@
     "deathDate": "Death date",
     "living": "Living (no death date)",
     "birthPlace": "Birth place",
+    "deathPlace": "Death place",
     "uncertain": "Uncertain",
     "gender": "Gender",
     "genderPlaceholder": "Unspecified",

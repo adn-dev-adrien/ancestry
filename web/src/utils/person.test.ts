@@ -14,6 +14,8 @@ const person = (over: Partial<Person> = {}): Person => ({
   living: false,
   birthPlace: null,
   birthPlaceUncertain: false,
+  deathPlace: null,
+  deathPlaceUncertain: false,
   photo: null,
   gender: null,
   notes: null,
