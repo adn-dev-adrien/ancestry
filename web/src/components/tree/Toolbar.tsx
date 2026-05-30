@@ -1,7 +1,7 @@
 import { useReactFlow } from '@xyflow/react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { ArrowLeft, Check, Download, Link2, Maximize, Save, UserPlus } from 'lucide-react';
+import { ArrowLeft, Check, Download, Link2, Maximize, Save, UserPlus, Wand2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
@@ -21,6 +21,7 @@ interface ToolbarProps {
   onAddPerson: () => void;
   onSave: () => void;
   onExport: () => void;
+  onAutoLayout: () => void;
 }
 
 export function Toolbar({
@@ -30,6 +31,7 @@ export function Toolbar({
   onAddPerson,
   onSave,
   onExport,
+  onAutoLayout,
 }: ToolbarProps) {
   const { t } = useTranslation();
   const { fitView } = useReactFlow();
@@ -51,6 +53,9 @@ export function Toolbar({
           onClick={() => fitView({ duration: 300 })}
         >
           <Maximize className="size-4" />
+        </Button>
+        <Button variant="ghost" size="icon" title={t('toolbar.autoLayout')} onClick={onAutoLayout}>
+          <Wand2 className="size-4" />
         </Button>
         <Button variant="ghost" size="icon" title={t('toolbar.addPerson')} onClick={onAddPerson}>
           <UserPlus className="size-4" />

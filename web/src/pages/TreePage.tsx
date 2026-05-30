@@ -14,6 +14,9 @@ import type { PersonInput } from '@/services/persons';
 import type { Person, Relationship } from '@/services/types';
 import { fullName } from '@/utils/person';
 import { relationshipIdsForEdge, type ParentChildEdgeData } from '@/utils/edgeDeletion';
+import { autoLayout } from '@/utils/autoLayout';
+import { clearUnionPositions } from '@/utils/unionPositions';
+import { useQueryClient } from '@tanstack/react-query';
 import type { Edge } from '@xyflow/react';
 import { TreeCanvas } from '@/components/tree/TreeCanvas';
 import { Toolbar, type SaveStatus } from '@/components/tree/Toolbar';
@@ -36,6 +39,7 @@ export function TreePage() {
   const personMutations = usePersonMutations(treeId);
   const relationshipMutations = useRelationshipMutations(treeId);
   const updateTree = useUpdateTree();
+  const queryClient = useQueryClient();
 
   const [panel, setPanel] = useState<PanelState>(null);
   const [connectMode, setConnectMode] = useState(false);
@@ -260,6 +264,41 @@ export function TreePage() {
     void deleteRelationships([relationship.id]);
   };
 
+  // ---- Auto-layout ----
+  const onAutoLayout = async () => {
+    if (persons.length === 0) return;
+    if (!window.confirm(t('tree.autoLayoutConfirm'))) return;
+    // Cancel any pending debounced position autosave so it doesn't fight us.
+    if (timer.current) clearTimeout(timer.current);
+    pending.current.clear();
+
+    const positions = autoLayout(persons, relationships);
+    // Only push persons whose position actually changes (saves round-trips on subsequent runs).
+    const toSave = [...positions.entries()].filter(([id, pos]) => {
+      const current = byId(id);
+      return !current || current.x !== pos.x || current.y !== pos.y;
+    });
+    if (toSave.length === 0) {
+      clearUnionPositions(treeId);
+      return;
+    }
+
+    setSaveStatus('saving');
+    try {
+      await Promise.all(
+        toSave.map(([id, { x, y }]) => personMutations.savePosition.mutateAsync({ id, x, y })),
+      );
+      clearUnionPositions(treeId);
+      // Refresh the tree so the canvas picks up every new x/y and rebuilds the union nodes.
+      await queryClient.invalidateQueries({ queryKey: ['tree', treeId] });
+      setSaveStatus('saved');
+      setTimeout(() => setSaveStatus((s) => (s === 'saved' ? 'idle' : s)), 1500);
+    } catch (e) {
+      showError(e);
+      setSaveStatus('dirty');
+    }
+  };
+
   const editingPerson: Person | undefined =
     panel?.mode === 'edit' ? byId(panel.personId) : undefined;
 
@@ -336,6 +375,9 @@ export function TreePage() {
           }}
           onExport={() => {
             downloadTreeExport(treeId, tree.title).catch(showError);
+          }}
+          onAutoLayout={() => {
+            void onAutoLayout();
           }}
         />
 

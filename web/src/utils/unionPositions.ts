@@ -24,3 +24,12 @@ export function saveUnionPosition(
     /* ignore quota/availability errors */
   }
 }
+
+/** Discards every saved union position for this tree (used by the auto-layout reset). */
+export function clearUnionPositions(treeId: string): void {
+  try {
+    localStorage.removeItem(key(treeId));
+  } catch {
+    /* ignore quota/availability errors */
+  }
+}

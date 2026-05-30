@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- Auto-layout: a new wand button in the toolbar repositions every person of the tree so each
+  generation sits on its own row, the woman is on the left of the man inside a couple, and
+  children are centered under the midpoint of their parents. A person remarried (or co-parenting
+  with several partners) is rendered once with their partners arranged chronologically around
+  them (oldest anchor on the left, newest on the right). Confirms before overwriting manual
+  positions; clears the per-tree union positions afterwards so the family bus is recomputed.
 - Relationship deletion: deleting an edge in the canvas (Suppr/Backspace) now persists the
   deletion server-side. A spouse edge removes that single SPOUSE row; a parent→junction edge
   removes that parent's PARENT_CHILD rows to every child of the family; a junction→child edge
