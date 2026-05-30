@@ -13,6 +13,8 @@ import { ApiError } from '@/services/api';
 import type { PersonInput } from '@/services/persons';
 import type { Person, Relationship } from '@/services/types';
 import { fullName } from '@/utils/person';
+import { relationshipIdsForEdge, type ParentChildEdgeData } from '@/utils/edgeDeletion';
+import type { Edge } from '@xyflow/react';
 import { TreeCanvas } from '@/components/tree/TreeCanvas';
 import { Toolbar, type SaveStatus } from '@/components/tree/Toolbar';
 import { PersonDetailPanel } from '@/components/tree/PersonDetailPanel';
@@ -175,6 +177,89 @@ export function TreePage() {
     });
   };
 
+  // ---- Relationship deletion (graph edge + in-panel trash) ----
+  const deleteRelationships = async (ids: string[]) => {
+    try {
+      await Promise.all(
+        ids.map((id) => relationshipMutations.remove.mutateAsync(id).catch(showError)),
+      );
+    } catch (e) {
+      showError(e);
+    }
+  };
+
+  const confirmEdgeDeletion = (edge: Edge): boolean => {
+    if (edge.type === 'spouse') {
+      const rel = relationships.find((r) => r.id === edge.id);
+      if (!rel) return false;
+      const a = byId(rel.sourcePersonId);
+      const b = byId(rel.targetPersonId);
+      return window.confirm(
+        t('tree.removeSpouseLinkConfirm', {
+          a: a ? fullName(a) : t('common.unknown'),
+          b: b ? fullName(b) : t('common.unknown'),
+        }),
+      );
+    }
+    const data = edge.data as ParentChildEdgeData | undefined;
+    if (!data) return false;
+    if (data.kind === 'parent-of-family') {
+      return window.confirm(
+        t('tree.removeBranchParentConfirm', { count: data.childrenIds.length }),
+      );
+    }
+    const child = byId(data.childId);
+    return window.confirm(
+      t('tree.removeBranchChildConfirm', {
+        count: data.parentIds.length,
+        name: child ? fullName(child) : t('common.unknown'),
+      }),
+    );
+  };
+
+  const onEdgesDelete = (deleted: Edge[]) => {
+    const ids = new Set<string>();
+    for (const edge of deleted) {
+      if (!confirmEdgeDeletion(edge)) continue;
+      relationshipIdsForEdge(edge, relationships).forEach((id) => ids.add(id));
+    }
+    if (ids.size > 0) void deleteRelationships([...ids]);
+  };
+
+  const onDeleteParent = (personId: string, parentId: string) => {
+    const parent = byId(parentId);
+    if (!window.confirm(
+      t('panel.removeParentConfirm', { name: parent ? fullName(parent) : t('common.unknown') }),
+    )) return;
+    const rel = relationships.find(
+      (r) => r.type === 'PARENT_CHILD' && r.sourcePersonId === parentId && r.targetPersonId === personId,
+    );
+    if (rel) void deleteRelationships([rel.id]);
+  };
+
+  const onDeleteChild = (personId: string, childId: string) => {
+    const child = byId(childId);
+    if (!window.confirm(
+      t('panel.removeChildConfirm', { name: child ? fullName(child) : t('common.unknown') }),
+    )) return;
+    const rel = relationships.find(
+      (r) => r.type === 'PARENT_CHILD' && r.sourcePersonId === personId && r.targetPersonId === childId,
+    );
+    if (rel) void deleteRelationships([rel.id]);
+  };
+
+  const onDeleteSpouse = (relationship: Relationship) => {
+    const partnerId =
+      relationship.sourcePersonId === (panel?.mode === 'edit' ? panel.personId : '')
+        ? relationship.targetPersonId
+        : relationship.sourcePersonId;
+    const partner = byId(partnerId);
+    if (!window.confirm(
+      t('panel.removeSpouseConfirm', { name: partner ? fullName(partner) : t('common.unknown') }),
+    )) return;
+    void deleteRelationships([relationship.id]);
+  };
+
   const editingPerson: Person | undefined =
     panel?.mode === 'edit' ? byId(panel.personId) : undefined;
 
@@ -230,6 +315,7 @@ export function TreePage() {
             const rel = relationships.find((r) => r.id === id);
             if (rel) setEditingMarriage(rel);
           }}
+          onEdgesDelete={onEdgesDelete}
         />
 
         <Toolbar
@@ -282,6 +368,9 @@ export function TreePage() {
           onExplicitSave={panel?.mode === 'edit' ? () => setPanel(null) : undefined}
           onDelete={panel?.mode === 'edit' ? onDeletePerson : undefined}
           onEditMarriage={setEditingMarriage}
+          onDeleteParent={onDeleteParent}
+          onDeleteChild={onDeleteChild}
+          onDeleteSpouse={onDeleteSpouse}
         />
 
         <MarriageEditor

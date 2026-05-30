@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next';
+import { Trash2 } from 'lucide-react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import {
   Drawer,
@@ -25,6 +26,9 @@ interface PersonDetailPanelProps {
   onExplicitSave?: () => void;
   onDelete?: () => void;
   onEditMarriage?: (relationship: Relationship) => void;
+  onDeleteParent?: (personId: string, parentId: string) => void;
+  onDeleteChild?: (personId: string, childId: string) => void;
+  onDeleteSpouse?: (relationship: Relationship) => void;
 }
 
 function year(date: string | null): string {
@@ -43,11 +47,13 @@ function RelativeList({
   ids,
   byId,
   showBirthDate = false,
+  onDelete,
 }: {
   label: string;
   ids: string[];
   byId: Map<string, Person>;
   showBirthDate?: boolean;
+  onDelete?: (id: string) => void;
 }) {
   const { t } = useTranslation();
   if (ids.length === 0) return null;
@@ -61,11 +67,22 @@ function RelativeList({
           return (
             <li key={id} className="flex items-baseline justify-between gap-2">
               <span className="truncate">{fullName(relative)}</span>
-              {showBirthDate && relative.birthDate && (
-                <span className="shrink-0 text-xs text-muted-foreground">
-                  ★ {relative.birthDate}
-                </span>
-              )}
+              <span className="flex shrink-0 items-baseline gap-2">
+                {showBirthDate && relative.birthDate && (
+                  <span className="text-xs text-muted-foreground">★ {relative.birthDate}</span>
+                )}
+                {onDelete && (
+                  <button
+                    type="button"
+                    aria-label={t('panel.remove')}
+                    title={t('panel.remove')}
+                    className="rounded p-1 text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+                    onClick={() => onDelete(id)}
+                  >
+                    <Trash2 className="size-3.5" />
+                  </button>
+                )}
+              </span>
             </li>
           );
         })}
@@ -79,11 +96,13 @@ function SpouseList({
   relationships,
   byId,
   onEditMarriage,
+  onDelete,
 }: {
   personId: string;
   relationships: Relationship[];
   byId: Map<string, Person>;
   onEditMarriage?: (relationship: Relationship) => void;
+  onDelete?: (relationship: Relationship) => void;
 }) {
   const { t } = useTranslation();
   const rows = spouseRelationships(personId, relationships);
@@ -98,15 +117,30 @@ function SpouseList({
           const partner = byId.get(partnerId);
           const summary = marriageSummary(relationship);
           return (
-            <li key={relationship.id}>
+            <li key={relationship.id} className="flex items-stretch gap-1">
               <button
                 type="button"
-                className="flex w-full items-baseline justify-between gap-2 rounded px-1 py-0.5 text-left hover:bg-accent"
+                className="flex flex-1 items-baseline justify-between gap-2 rounded px-1 py-0.5 text-left hover:bg-accent"
                 onClick={() => onEditMarriage?.(relationship)}
               >
                 <span className="truncate">{partner ? fullName(partner) : t('common.unknown')}</span>
                 {summary && <span className="shrink-0 text-xs text-muted-foreground">{summary}</span>}
               </button>
+              {onDelete && (
+                <button
+                  type="button"
+                  aria-label={t('panel.remove')}
+                  title={t('panel.remove')}
+                  className="shrink-0 rounded p-1 text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+                  // Stop propagation so the row click (which opens the marriage editor) doesn't fire.
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onDelete(relationship);
+                  }}
+                >
+                  <Trash2 className="size-3.5" />
+                </button>
+              )}
             </li>
           );
         })}
@@ -125,6 +159,9 @@ function PanelBody({
   onExplicitSave,
   onDelete,
   onEditMarriage,
+  onDeleteParent,
+  onDeleteChild,
+  onDeleteSpouse,
 }: Omit<PersonDetailPanelProps, 'open' | 'onClose'>) {
   const { t } = useTranslation();
   const byId = new Map(persons.map((p) => [p.id, p]));
@@ -141,18 +178,25 @@ function PanelBody({
       />
       {mode === 'edit' && person && (
         <div className="space-y-3 border-t pt-4">
-          <RelativeList label={t('panel.parents')} ids={parentsOf(person.id, relationships)} byId={byId} />
+          <RelativeList
+            label={t('panel.parents')}
+            ids={parentsOf(person.id, relationships)}
+            byId={byId}
+            onDelete={onDeleteParent ? (parentId) => onDeleteParent(person.id, parentId) : undefined}
+          />
           <RelativeList
             label={t('panel.children')}
             ids={childrenOf(person.id, relationships)}
             byId={byId}
             showBirthDate
+            onDelete={onDeleteChild ? (childId) => onDeleteChild(person.id, childId) : undefined}
           />
           <SpouseList
             personId={person.id}
             relationships={relationships}
             byId={byId}
             onEditMarriage={onEditMarriage}
+            onDelete={onDeleteSpouse}
           />
         </div>
       )}

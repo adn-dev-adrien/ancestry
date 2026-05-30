@@ -22,7 +22,12 @@
     "notFound": "Arbre introuvable.",
     "titleAria": "Titre de l'arbre",
     "errorGeneric": "Une erreur est survenue",
-    "deleteConfirm": "Supprimer {{name}} et toutes ses relations ?"
+    "deleteConfirm": "Supprimer {{name}} et toutes ses relations ?",
+    "removeBranchParentConfirm_one": "Supprimer le lien parent → 1 enfant ?",
+    "removeBranchParentConfirm_other": "Supprimer le lien parent → {{count}} enfants ?",
+    "removeBranchChildConfirm_one": "Supprimer le lien de {{name}} avec 1 parent ?",
+    "removeBranchChildConfirm_other": "Supprimer les liens de {{name}} avec {{count}} parents ?",
+    "removeSpouseLinkConfirm": "Supprimer la relation conjugale entre {{a}} et {{b}} ?"
   },
   "toolbar": {
     "back": "Retour aux arbres",
@@ -41,7 +46,11 @@
     "editPerson": "Modifier la personne",
     "parents": "Parents",
     "children": "Enfants",
-    "spouses": "Conjoints"
+    "spouses": "Conjoints",
+    "remove": "Supprimer cette relation",
+    "removeParentConfirm": "Supprimer le lien avec le parent {{name}} ?",
+    "removeChildConfirm": "Supprimer le lien avec l'enfant {{name}} ?",
+    "removeSpouseConfirm": "Supprimer la relation conjugale avec {{name}} ?"
   },
   "marriage": {
     "title": "Mariage",

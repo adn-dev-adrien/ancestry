@@ -73,6 +73,23 @@ describe('buildGraph', () => {
     // Junctions are draggable (to reposition the bus) but not selectable (no panel).
     expect(unions[0].selectable).toBe(false);
     expect(unions[0].draggable).toBe(true);
+
+    // Parent → union edges carry the data needed to resolve a deletion (this parent's parenthood
+    // of every child of the family).
+    const parentA = edges.find((e) => e.source === 'A' && e.target === uid);
+    expect(parentA?.data).toEqual({
+      kind: 'parent-of-family',
+      parentId: 'A',
+      childrenIds: ['C', 'D'],
+    });
+    // Union → child edges carry the data to resolve a deletion (every parent of the family for
+    // that child).
+    const childC = edges.find((e) => e.source === uid && e.target === 'C');
+    expect(childC?.data).toEqual({
+      kind: 'family-of-child',
+      parentIds: ['A', 'B'],
+      childId: 'C',
+    });
   });
 
   it('uses a saved manual position for a union when provided', () => {

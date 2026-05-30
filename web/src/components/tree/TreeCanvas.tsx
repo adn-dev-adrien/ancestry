@@ -33,6 +33,7 @@ interface TreeCanvasProps {
   onPaneClick: () => void;
   onPositionChange: (id: string, x: number, y: number) => void;
   onSpouseEdgeClick: (relationshipId: string) => void;
+  onEdgesDelete: (edges: Edge[]) => void;
 }
 
 export function TreeCanvas({
@@ -47,6 +48,7 @@ export function TreeCanvas({
   onPaneClick,
   onSpouseEdgeClick,
   onPositionChange,
+  onEdgesDelete,
 }: TreeCanvasProps) {
   const [nodes, setNodes, onNodesChange] = useNodesState<Node>([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([]);
@@ -86,6 +88,7 @@ export function TreeCanvas({
       onEdgeClick={(_event, edge: Edge) => {
         if (edge.type === 'spouse') onSpouseEdgeClick(edge.id);
       }}
+      onEdgesDelete={onEdgesDelete}
       onPaneClick={onPaneClick}
       nodesConnectable={false}
       fitView

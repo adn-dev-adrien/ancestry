@@ -109,6 +109,9 @@ export function buildGraph(
         sourceHandle: 'pc-source',
         targetHandle: 'union-target',
         type: 'parentChild',
+        // Read by edge-deletion: this edge represents that one parent's parenthood of every
+        // child of the family. Deleting it drops PARENT_CHILD(pid → cid) for every cid.
+        data: { kind: 'parent-of-family', parentId: pid, childrenIds: [...fam.children] },
       }),
     );
     fam.children.forEach((cid) =>
@@ -120,6 +123,9 @@ export function buildGraph(
         targetHandle: 'pc-target',
         type: 'parentChild',
         markerEnd: { type: MarkerType.ArrowClosed },
+        // This edge represents that one child's link to all parents of the family. Deleting it
+        // drops PARENT_CHILD(pid → cid) for every pid in the family parents.
+        data: { kind: 'family-of-child', parentIds: [...fam.parents], childId: cid },
       }),
     );
   }
