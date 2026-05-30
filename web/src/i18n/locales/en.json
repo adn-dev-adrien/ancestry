@@ -22,7 +22,12 @@
     "notFound": "Tree not found.",
     "titleAria": "Tree title",
     "errorGeneric": "Something went wrong",
-    "deleteConfirm": "Delete {{name}} and all their relationships?"
+    "deleteConfirm": "Delete {{name}} and all their relationships?",
+    "removeBranchParentConfirm_one": "Remove this parent's link to 1 child?",
+    "removeBranchParentConfirm_other": "Remove this parent's links to {{count}} children?",
+    "removeBranchChildConfirm_one": "Remove {{name}}'s link to 1 parent?",
+    "removeBranchChildConfirm_other": "Remove {{name}}'s links to {{count}} parents?",
+    "removeSpouseLinkConfirm": "Remove the marriage between {{a}} and {{b}}?"
   },
   "toolbar": {
     "back": "Back to trees",
@@ -41,7 +46,11 @@
     "editPerson": "Edit person",
     "parents": "Parents",
     "children": "Children",
-    "spouses": "Spouses"
+    "spouses": "Spouses",
+    "remove": "Remove this relationship",
+    "removeParentConfirm": "Remove the link with parent {{name}}?",
+    "removeChildConfirm": "Remove the link with child {{name}}?",
+    "removeSpouseConfirm": "Remove the marriage with {{name}}?"
   },
   "marriage": {
     "title": "Marriage",

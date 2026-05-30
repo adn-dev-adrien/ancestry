@@ -8,6 +8,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- Relationship deletion: deleting an edge in the canvas (Suppr/Backspace) now persists the
+  deletion server-side. A spouse edge removes that single SPOUSE row; a parent→junction edge
+  removes that parent's PARENT_CHILD rows to every child of the family; a junction→child edge
+  removes that child's PARENT_CHILD rows from every parent of the family. Each operation is
+  guarded by a `window.confirm`.
+- Trash icon in the person fiche, next to each parent/child/spouse row, to delete that single
+  relationship (with confirmation). The spouse trash stops propagation so clicking the row still
+  opens the marriage editor.
 - Death place on persons: optional free-text field with an "uncertain" flag, editable in the form
   and included in JSON export/import. Not shown on the graph node (kept minimal).
 - Build version badge: the home footer shows the commit SHA the front-end was built from
